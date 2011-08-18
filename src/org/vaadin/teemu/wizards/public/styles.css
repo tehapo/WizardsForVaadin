@@ -1,0 +1,68 @@
+.v-wizardprogressbar .step {
+	float: left;
+	overflow: hidden;
+}
+
+.v-wizardprogressbar .bar-wrapper {
+	clear: left;
+	float: left;
+	width: 100%;
+	height: 10px;
+	margin-bottom: 3px;
+	border: none;
+}
+.v-wizardprogressbar .bar {
+	height: 100%;
+	background-color: #00b3ef; 
+	background: -moz-linear-gradient(center top , #20D4FF, #009CD0) repeat-x scroll left top transparent;
+	background: -webkit-gradient(linear, left top, left bottom, from(#20d4ff), to(#009cd0)) top left repeat-x;
+	-moz-transition: width 0.5s ease-out 0s;
+	-webkit-transition: width 0.5s ease-out 0s;
+}
+
+/* Step captions */
+.v-wizardprogressbar .step-caption {
+	color: #bfbfbf;
+	font-size: 110%;
+	white-space: nowrap;
+	padding-bottom: 2px;
+	text-align: center;
+	-moz-transition: all 0.25s ease-in-out;
+	-webkit-transition: all 0.25s ease-in-out; 
+}
+.v-wizardprogressbar .completed .step-caption,
+.v-wizardprogressbar .current .step-caption {
+	color: #000;
+}
+
+/* Step progress bar */
+.v-wizardprogressbar .step-progress {
+	background: #dfdfdf;
+	border-top: 1px solid #767471;
+	border-bottom: 1px solid #2e2d2a;
+	height: 8px;
+	width: 100%;
+	float: left;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.v-wizardprogressbar .first .step-progress {
+	border-left: 1px solid #45433f;
+	-moz-border-radius: 8px 0 0 8px;
+	-webkit-border-radius: 8px 0 0 8px;
+}
+.v-wizardprogressbar .current .step-progress {
+	border-right: 1px solid #005f7e;
+}
+.v-wizardprogressbar .last .step-progress {
+	border-right: 1px solid #45433f;
+	-moz-border-radius: 0 8px 8px 0;
+	-webkit-border-radius: 0 8px 8px 0;
+}
+.v-wizardprogressbar .completed .step-progress,
+.v-wizardprogressbar .current .step-progress {
+	background-color: #00b3ef; 
+	background: -moz-linear-gradient(top, #20d4ff, #009cd0) top left repeat-x;
+	background: -webkit-gradient(linear, left top, left bottom, from(#20d4ff), to(#009cd0)) top left repeat-x;
+}
