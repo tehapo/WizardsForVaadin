@@ -101,7 +101,7 @@ public class WizardsDemoApplication extends Application implements
                             + "user interfaces. Please use the controls below this content area to navigate "
                             + "through this wizard that demonstrates the features of this add-on.</p><h3>Additional information</h3>"
                             + "<ul><li><a href=\"\">Wizards for Vaadin at Vaadin Directory</a></li>"
-                            + "<li><a href=\"\">Source code</a></li></ul>",
+                            + "<li><a href=\"http://code.google.com/p/wizards-for-vaadin/\">Project page at Google Project Hosting</a></li></ul>",
                     Label.CONTENT_XHTML);
         }
 
