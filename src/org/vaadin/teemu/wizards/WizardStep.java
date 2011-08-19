@@ -29,11 +29,12 @@ public interface WizardStep {
     public boolean onAdvance();
 
     /**
-     * Returns true if user is allowed to navigate back before this WizardStep.
-     * Typically this method is called when user clicks the Back button of the
-     * {@link Wizard}.
+     * Returns true if user is allowed to navigate backwards from this
+     * WizardStep. Typically this method is called when user clicks the Back
+     * button of the {@link Wizard}.
      * 
-     * @return true if user is allowed to navigate back before this WizardStep.
+     * @return true if user is allowed to navigate backwards from this
+     *         WizardStep.
      */
     public boolean onBack();
 
