@@ -26,6 +26,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
     private Button nextButton;
     private Button backButton;
+    private Button finishButton;
 
     private WizardStep currentStep;
 
@@ -58,10 +59,15 @@ public class Wizard extends VerticalLayout implements ClickListener {
         backButton = new Button("Back");
         backButton.addListener(this);
 
+        finishButton = new Button("Finish");
+        finishButton.addListener(this);
+        finishButton.setVisible(false);
+
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.addComponent(backButton);
         footer.addComponent(nextButton);
+        footer.addComponent(finishButton);
 
         progressBar = new WizardProgressBar(this);
         progressBar.setWidth("100%");
@@ -111,15 +117,25 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
     private void updateButtons() {
         if (isLastStep(currentStep)) {
-            nextButton.setCaption("Finish");
+            finishButton.setVisible(true);
+            nextButton.setVisible(false);
         } else {
-            nextButton.setCaption("Next");
+            finishButton.setVisible(false);
+            nextButton.setVisible(true);
         }
         backButton.setEnabled(!isFirstStep(currentStep));
     }
 
     public Button getNextButton() {
         return nextButton;
+    }
+
+    public Button getBackButton() {
+        return backButton;
+    }
+
+    public Button getFinishButton() {
+        return finishButton;
     }
 
     private void displayStep(WizardStep step) {
@@ -144,20 +160,23 @@ public class Wizard extends VerticalLayout implements ClickListener {
             nextButtonClick(event);
         } else if (event.getButton() == backButton) {
             backButtonClick(event);
+        } else if (event.getButton() == finishButton) {
+            finishButtonClick(event);
+        }
+    }
+
+    private void finishButtonClick(ClickEvent event) {
+        if (currentStep.onAdvance()) {
+            // next (finish) allowed -> fire complete event
+            fireWizardCompleteEvent();
         }
     }
 
     private void nextButtonClick(ClickEvent event) {
         if (currentStep.onAdvance()) {
-            // next allowed
-            if (isLastStep(currentStep)) {
-                // this was the last step
-                fireWizardCompleteEvent();
-            } else {
-                // display next step
-                int currentIndex = steps.indexOf(currentStep);
-                displayStep(steps.get(currentIndex + 1));
-            }
+            // next allowed -> display next step
+            int currentIndex = steps.indexOf(currentStep);
+            displayStep(steps.get(currentIndex + 1));
         }
     }
 
