@@ -5,6 +5,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
@@ -22,7 +23,7 @@ public class VWizardProgressBar extends FlowPanel implements Paintable {
     ApplicationConnection client;
 
     private Element barElement;
-    private FlowPanel captions;
+    private HorizontalPanel captions;
 
     /**
      * The constructor should first call super() to initialize the component and
@@ -33,7 +34,8 @@ public class VWizardProgressBar extends FlowPanel implements Paintable {
         // style name in DOM tree
         setStyleName(CLASSNAME);
 
-        captions = new FlowPanel();
+        captions = new HorizontalPanel();
+        captions.setWidth("100%");
         add(captions);
 
         Element barWrapperElement = DOM.createDiv();
