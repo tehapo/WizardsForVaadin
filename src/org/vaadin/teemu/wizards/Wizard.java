@@ -1,10 +1,14 @@
 package org.vaadin.teemu.wizards;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
+import org.vaadin.teemu.wizards.event.WizardProgressListener;
+import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
+import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -15,6 +19,42 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 
+/**
+ * Component for displaying multi-step wizard style user interface.
+ * 
+ * <p>
+ * The steps of the wizard must be implementations of the {@link WizardStep}
+ * interface. Use the {@link #addStep(WizardStep)} method to add these steps in
+ * the same order they are supposed to be displayed.
+ * </p>
+ * 
+ * <p>
+ * To react on the progress or completion of this {@code Wizard} you should add
+ * one or more listeners that implement the {@link WizardProgressListener}
+ * interface. These listeners are added using the
+ * {@link #addListener(WizardProgressListener)} method and removed with the
+ * {@link #removeListener(WizardProgressListener)}.
+ * </p>
+ * 
+ * <p>
+ * To use the default progress bar {@link WizardProgressBar} you should register
+ * an instance of it as a listener and set it as the header of this
+ * {@link Wizard} or optionally display it in another place in your application.
+ * <br />
+ * <br />
+ * Example on using the progress bar:
+ * 
+ * <pre>
+ * Wizard myWizard = new Wizard();
+ * WizardProgressBar progressBar = new WizardProgressBar(wizard);
+ * myWizard.addListener(progressBar);
+ * myWizard.setHeader(progressBar);
+ * </pre>
+ * 
+ * </p>
+ * 
+ * @author Teemu Pöntelin / Vaadin Ltd
+ */
 @SuppressWarnings("serial")
 public class Wizard extends VerticalLayout implements ClickListener {
 
@@ -22,25 +62,32 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
     private Panel contentPanel;
 
-    private WizardProgressBar progressBar;
-
     private Button nextButton;
     private Button backButton;
     private Button finishButton;
 
     private WizardStep currentStep;
+    private Component header;
 
+    private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
+    private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
     private static final Method WIZARD_COMPLETED_METHOD;
 
     static {
         try {
-            WIZARD_COMPLETED_METHOD = WizardCompletedListener.class
+            WIZARD_COMPLETED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("wizardCompleted",
                             new Class[] { WizardCompletedEvent.class });
+            WIZARD_STEP_SET_CHANGED_METHOD = WizardProgressListener.class
+                    .getDeclaredMethod("stepSetChanged",
+                            new Class[] { WizardStepSetChangedEvent.class });
+            WIZARD_ACTIVE_STEP_CHANGED_METHOD = WizardProgressListener.class
+                    .getDeclaredMethod("activeStepChanged",
+                            new Class[] { WizardStepActivationEvent.class });
         } catch (final java.lang.NoSuchMethodException e) {
             // This should never happen
             throw new java.lang.RuntimeException(
-                    "Internal error finding methods in Wizard");
+                    "Internal error finding methods in Wizard", e);
         }
     }
 
@@ -69,16 +116,21 @@ public class Wizard extends VerticalLayout implements ClickListener {
         footer.addComponent(nextButton);
         footer.addComponent(finishButton);
 
-        progressBar = new WizardProgressBar(this);
-        progressBar.setWidth("100%");
-
-        addComponent(progressBar);
         addComponent(contentPanel);
         addComponent(footer);
         setComponentAlignment(footer, Alignment.BOTTOM_RIGHT);
 
         setExpandRatio(contentPanel, 1.0f);
         setSizeFull();
+    }
+
+    public void setHeader(Component header) {
+        if (this.header != null) {
+            replaceComponent(this.header, header);
+        } else {
+            addComponentAsFirst(header);
+        }
+        this.header = header;
     }
 
     public void addStep(WizardStep step) {
@@ -90,17 +142,25 @@ public class Wizard extends VerticalLayout implements ClickListener {
         steps.add(step);
         updateButtons();
 
-        progressBar.requestRepaint();
+        fireEvent(new WizardStepSetChangedEvent(this));
     }
 
-    public void addListener(WizardCompletedListener listener) {
+    public void addListener(WizardProgressListener listener) {
         addListener(WizardCompletedEvent.class, listener,
                 WIZARD_COMPLETED_METHOD);
+        addListener(WizardStepActivationEvent.class, listener,
+                WIZARD_ACTIVE_STEP_CHANGED_METHOD);
+        addListener(WizardStepSetChangedEvent.class, listener,
+                WIZARD_STEP_SET_CHANGED_METHOD);
     }
 
-    public void removeListener(WizardCompletedListener listener) {
+    public void removeListener(WizardProgressListener listener) {
         removeListener(WizardCompletedEvent.class, listener,
                 WIZARD_COMPLETED_METHOD);
+        removeListener(WizardStepActivationEvent.class, listener,
+                WIZARD_ACTIVE_STEP_CHANGED_METHOD);
+        removeListener(WizardStepSetChangedEvent.class, listener,
+                WIZARD_STEP_SET_CHANGED_METHOD);
     }
 
     public List<WizardStep> getSteps() {
@@ -111,7 +171,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
         return steps.indexOf(step) < steps.indexOf(currentStep);
     }
 
-    public boolean isCurrentStep(WizardStep step) {
+    public boolean isActive(WizardStep step) {
         return (step == currentStep);
     }
 
@@ -144,7 +204,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
         currentStep = step;
 
         updateButtons();
-        progressBar.requestRepaint();
+        fireEvent(new WizardStepActivationEvent(this, step));
     }
 
     private boolean isFirstStep(WizardStep step) {
@@ -168,7 +228,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
     private void finishButtonClick(ClickEvent event) {
         if (currentStep.onAdvance()) {
             // next (finish) allowed -> fire complete event
-            fireWizardCompleteEvent();
+            fireEvent(new WizardCompletedEvent(this));
         }
     }
 
@@ -188,37 +248,4 @@ public class Wizard extends VerticalLayout implements ClickListener {
         }
     }
 
-    private void fireWizardCompleteEvent() {
-        fireEvent(new WizardCompletedEvent(this));
-    }
-
-    public class WizardCompletedEvent extends Component.Event {
-
-        public WizardCompletedEvent(Wizard source) {
-            super(source);
-        }
-
-        /**
-         * Returns the {@link Wizard} component that was just completed.
-         * 
-         * @return the completed {@link Wizard}
-         */
-        public Wizard getWizard() {
-            return (Wizard) getSource();
-        }
-
-    }
-
-    public interface WizardCompletedListener extends Serializable {
-
-        /**
-         * Called when a {@link Wizard} is complete.
-         * 
-         * @param event
-         *            {@link Component.Event} object containing details about
-         *            the completion
-         */
-        public void wizardCompleted(WizardCompletedEvent event);
-
-    }
 }

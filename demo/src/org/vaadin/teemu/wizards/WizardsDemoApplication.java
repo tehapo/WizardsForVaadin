@@ -2,8 +2,10 @@ package org.vaadin.teemu.wizards;
 
 import java.util.Date;
 
-import org.vaadin.teemu.wizards.Wizard.WizardCompletedEvent;
-import org.vaadin.teemu.wizards.Wizard.WizardCompletedListener;
+import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
+import org.vaadin.teemu.wizards.event.WizardProgressListener;
+import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
+import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
 import com.vaadin.Application;
 import com.vaadin.data.util.BeanItem;
@@ -17,9 +19,16 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
+/**
+ * Demo application for the <a
+ * href="http://vaadin.com/addon/wizards-for-vaadin">Wizards for Vaadin</a>
+ * add-on.
+ * 
+ * @author Teemu Pöntelin / Vaadin Ltd
+ */
 @SuppressWarnings("serial")
 public class WizardsDemoApplication extends Application implements
-        WizardCompletedListener {
+        WizardProgressListener {
 
     // DummyBean is used as some dummy data in a form.
     private DummyBean bean = new DummyBean();
@@ -48,9 +57,14 @@ public class WizardsDemoApplication extends Application implements
         wizard.addStep(new FourthStep());
         wizard.setHeight("500px");
         wizard.setWidth("700px");
+
+        // setup the progress bar
+        WizardProgressBar progressBar = new WizardProgressBar(wizard);
+        wizard.addListener(progressBar);
+        wizard.setHeader(progressBar);
+
         mainLayout.addComponent(wizard);
         mainLayout.setComponentAlignment(wizard, Alignment.TOP_CENTER);
-
     }
 
     public static class DummyBean {
@@ -231,6 +245,7 @@ public class WizardsDemoApplication extends Application implements
     public void wizardCompleted(WizardCompletedEvent event) {
         wizard.setVisible(false);
         getMainWindow().showNotification("Wizard Completed!");
+        getMainWindow().setCaption("Wizard Completed!");
         Button startOverButton = new Button("Run the demo again",
                 new Button.ClickListener() {
                     public void buttonClick(ClickEvent event) {
@@ -241,4 +256,14 @@ public class WizardsDemoApplication extends Application implements
         mainLayout.setComponentAlignment(startOverButton,
                 Alignment.MIDDLE_CENTER);
     }
+
+    public void activeStepChanged(WizardStepActivationEvent event) {
+        // display the step caption as the window title
+        getMainWindow().setCaption(event.getActivatedStep().getCaption());
+    }
+
+    public void stepSetChanged(WizardStepSetChangedEvent event) {
+        // NOP, not interested on this event
+    }
+
 }

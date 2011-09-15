@@ -69,6 +69,8 @@ public class VWizardProgressBar extends FlowPanel implements Paintable {
 
         int offsetWidth = getOffsetWidth();
 
+        boolean completed = uidl.getBooleanAttribute("complete");
+
         UIDL steps = uidl.getChildByTagName("steps");
         int numberOfSteps = steps.getChildCount();
         double stepWidth = offsetWidth / (double) numberOfSteps;
@@ -86,7 +88,7 @@ public class VWizardProgressBar extends FlowPanel implements Paintable {
             }
 
             // update the barElement width according to the current step
-            if (step.getBooleanAttribute("current")) {
+            if (!completed && step.getBooleanAttribute("current")) {
                 barElement.getStyle().setWidth(
                         (i + 1) * stepWidth - stepWidth / 2, Unit.PX);
             }
@@ -97,6 +99,10 @@ public class VWizardProgressBar extends FlowPanel implements Paintable {
             boolean first = (i == 0);
             boolean last = (i == steps.getChildCount() - 1);
             updateStyleNames(step, item, first, last);
+        }
+
+        if (completed) {
+            barElement.getStyle().setWidth(100, Unit.PCT);
         }
     }
 
