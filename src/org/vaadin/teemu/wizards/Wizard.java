@@ -15,6 +15,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -199,8 +200,15 @@ public class Wizard extends VerticalLayout implements ClickListener {
     }
 
     private void displayStep(WizardStep step) {
-        contentPanel.removeAllComponents();
-        contentPanel.addComponent(step.getContent());
+        Component newContent = step.getContent();
+        if (newContent instanceof ComponentContainer) {
+            contentPanel.setContent((ComponentContainer) newContent);
+        } else {
+            VerticalLayout container = new VerticalLayout();
+            container.setMargin(true);
+            contentPanel.setContent(container);
+            contentPanel.addComponent(newContent);
+        }
         currentStep = step;
 
         updateButtons();
