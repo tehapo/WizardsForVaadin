@@ -39,6 +39,8 @@ public class LastStep implements WizardStep {
                         public void buttonClick(ClickEvent event) {
                             owner.addStep(new WizardStep() {
 
+                                private final Date createdAt = new Date();
+
                                 public boolean onBack() {
                                     return true;
                                 }
@@ -50,7 +52,7 @@ public class LastStep implements WizardStep {
                                 public Component getContent() {
                                     return new Label(
                                             "This step was created on "
-                                                    + new Date());
+                                                    + createdAt);
                                 }
 
                                 public String getCaption() {
