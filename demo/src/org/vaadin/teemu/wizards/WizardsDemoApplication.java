@@ -1,5 +1,6 @@
 package org.vaadin.teemu.wizards;
 
+import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
@@ -57,18 +58,7 @@ public class WizardsDemoApplication extends Application implements
     }
 
     public void wizardCompleted(WizardCompletedEvent event) {
-        wizard.setVisible(false);
-        getMainWindow().showNotification("Wizard Completed!");
-        getMainWindow().setCaption("Wizard Completed!");
-        Button startOverButton = new Button("Run the demo again",
-                new Button.ClickListener() {
-                    public void buttonClick(ClickEvent event) {
-                        WizardsDemoApplication.this.close();
-                    }
-                });
-        mainLayout.addComponent(startOverButton);
-        mainLayout.setComponentAlignment(startOverButton,
-                Alignment.MIDDLE_CENTER);
+        endWizard("Wizard Completed!");
     }
 
     public void activeStepChanged(WizardStepActivationEvent event) {
@@ -78,6 +68,25 @@ public class WizardsDemoApplication extends Application implements
 
     public void stepSetChanged(WizardStepSetChangedEvent event) {
         // NOP, not interested on this event
+    }
+
+    public void wizardCancelled(WizardCancelledEvent event) {
+        endWizard("Wizard Cancelled!");
+    }
+
+    private void endWizard(String message) {
+        wizard.setVisible(false);
+        getMainWindow().showNotification(message);
+        getMainWindow().setCaption(message);
+        Button startOverButton = new Button("Run the demo again",
+                new Button.ClickListener() {
+                    public void buttonClick(ClickEvent event) {
+                        WizardsDemoApplication.this.close();
+                    }
+                });
+        mainLayout.addComponent(startOverButton);
+        mainLayout.setComponentAlignment(startOverButton,
+                Alignment.MIDDLE_CENTER);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.vaadin.teemu.wizards;
 
+import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
@@ -61,6 +62,10 @@ public class WizardProgressBar extends AbstractComponent implements
     public void wizardCompleted(WizardCompletedEvent event) {
         completed = true;
         requestRepaint();
+    }
+
+    public void wizardCancelled(WizardCancelledEvent event) {
+        // NOP, no need to react to cancellation
     }
 
 }

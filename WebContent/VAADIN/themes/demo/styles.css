@@ -16,7 +16,7 @@
 .intro-arrow {
 	position: absolute;
 	bottom: 5px;
-	right: 10px;
+	right: 70px;
 	-webkit-animation: hovering 2s infinite;
 	-moz-animation: hovering 2s infinite;
 }

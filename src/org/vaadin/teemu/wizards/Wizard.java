@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
@@ -65,6 +66,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
     private Button nextButton;
     private Button backButton;
     private Button finishButton;
+    private Button cancelButton;
 
     private WizardStep currentStep;
     private Component header;
@@ -72,6 +74,7 @@ public class Wizard extends VerticalLayout implements ClickListener {
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
     private static final Method WIZARD_COMPLETED_METHOD;
+    private static final Method WIZARD_CANCELLED_METHOD;
 
     static {
         try {
@@ -84,6 +87,9 @@ public class Wizard extends VerticalLayout implements ClickListener {
             WIZARD_ACTIVE_STEP_CHANGED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("activeStepChanged",
                             new Class[] { WizardStepActivationEvent.class });
+            WIZARD_CANCELLED_METHOD = WizardProgressListener.class
+                    .getDeclaredMethod("wizardCancelled",
+                            new Class[] { WizardCancelledEvent.class });
         } catch (final java.lang.NoSuchMethodException e) {
             // This should never happen
             throw new java.lang.RuntimeException(
@@ -108,10 +114,14 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
         finishButton = new Button("Finish");
         finishButton.addListener(this);
-        finishButton.setVisible(false);
+        finishButton.setEnabled(false);
+
+        cancelButton = new Button("Cancel");
+        cancelButton.addListener(this);
 
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
+        footer.addComponent(cancelButton);
         footer.addComponent(backButton);
         footer.addComponent(nextButton);
         footer.addComponent(finishButton);
@@ -152,6 +162,8 @@ public class Wizard extends VerticalLayout implements ClickListener {
                 WIZARD_ACTIVE_STEP_CHANGED_METHOD);
         addListener(WizardStepSetChangedEvent.class, listener,
                 WIZARD_STEP_SET_CHANGED_METHOD);
+        addListener(WizardCancelledEvent.class, listener,
+                WIZARD_CANCELLED_METHOD);
     }
 
     public void removeListener(WizardProgressListener listener) {
@@ -161,6 +173,8 @@ public class Wizard extends VerticalLayout implements ClickListener {
                 WIZARD_ACTIVE_STEP_CHANGED_METHOD);
         removeListener(WizardStepSetChangedEvent.class, listener,
                 WIZARD_STEP_SET_CHANGED_METHOD);
+        removeListener(WizardCancelledEvent.class, listener,
+                WIZARD_CANCELLED_METHOD);
     }
 
     public List<WizardStep> getSteps() {
@@ -177,11 +191,11 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
     private void updateButtons() {
         if (isLastStep(currentStep)) {
-            finishButton.setVisible(true);
-            nextButton.setVisible(false);
+            finishButton.setEnabled(true);
+            nextButton.setEnabled(false);
         } else {
-            finishButton.setVisible(false);
-            nextButton.setVisible(true);
+            finishButton.setEnabled(false);
+            nextButton.setEnabled(true);
         }
         backButton.setEnabled(!isFirstStep(currentStep));
     }
@@ -196,6 +210,10 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
     public Button getFinishButton() {
         return finishButton;
+    }
+
+    public Button getCancelButton() {
+        return cancelButton;
     }
 
     private void displayStep(WizardStep step) {
@@ -222,7 +240,13 @@ public class Wizard extends VerticalLayout implements ClickListener {
             backButtonClick(event);
         } else if (event.getButton() == finishButton) {
             finishButtonClick(event);
+        } else if (event.getButton() == cancelButton) {
+            cancelButtonClick(event);
         }
+    }
+
+    private void cancelButtonClick(ClickEvent event) {
+        fireEvent(new WizardCancelledEvent(this));
     }
 
     private void finishButtonClick(ClickEvent event) {
