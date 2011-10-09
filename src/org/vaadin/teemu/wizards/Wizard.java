@@ -3,7 +3,9 @@ package org.vaadin.teemu.wizards;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
@@ -11,6 +13,8 @@ import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
 import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
+import com.vaadin.terminal.PaintException;
+import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -18,6 +22,9 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UriFragmentUtility;
+import com.vaadin.ui.UriFragmentUtility.FragmentChangedEvent;
+import com.vaadin.ui.UriFragmentUtility.FragmentChangedListener;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -30,9 +37,18 @@ import com.vaadin.ui.VerticalLayout;
  * </p>
  * 
  * <p>
- * To react on the progress or completion of this {@code Wizard} you should add
- * one or more listeners that implement the {@link WizardProgressListener}
- * interface. These listeners are added using the
+ * The wizard also supports navigation through URI fragments. This feature is
+ * disabled by default, but you can enable it using
+ * {@link #setUriFragmentEnabled(boolean)} method. Each step will get a
+ * generated identifier that is used as the URI fragment. If you wish to
+ * override these with your own identifiers, you can add the steps using the
+ * overloaded {@link #addStep(WizardStep, String)} method.
+ * </p>
+ * 
+ * <p>
+ * To react on the progress, cancellation or completion of this {@code Wizard}
+ * you should add one or more listeners that implement the
+ * {@link WizardProgressListener} interface. These listeners are added using the
  * {@link #addListener(WizardProgressListener)} method and removed with the
  * {@link #removeListener(WizardProgressListener)}.
  * </p>
@@ -57,9 +73,11 @@ import com.vaadin.ui.VerticalLayout;
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
-public class Wizard extends VerticalLayout implements ClickListener {
+public class Wizard extends VerticalLayout implements ClickListener,
+        FragmentChangedListener {
 
     private final List<WizardStep> steps = new ArrayList<WizardStep>();
+    private final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
 
     private Panel contentPanel;
 
@@ -69,7 +87,9 @@ public class Wizard extends VerticalLayout implements ClickListener {
     private Button cancelButton;
 
     private WizardStep currentStep;
+    private WizardStep lastCompletedStep;
     private Component header;
+    private UriFragmentUtility uriFragment;
 
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
@@ -103,6 +123,10 @@ public class Wizard extends VerticalLayout implements ClickListener {
     }
 
     private void init() {
+        uriFragment = new UriFragmentUtility();
+        uriFragment.addListener(this);
+        uriFragment.setEnabled(false); // disabled by default
+
         contentPanel = new Panel();
         contentPanel.setSizeFull();
 
@@ -128,10 +152,19 @@ public class Wizard extends VerticalLayout implements ClickListener {
 
         addComponent(contentPanel);
         addComponent(footer);
+        addComponent(uriFragment);
         setComponentAlignment(footer, Alignment.BOTTOM_RIGHT);
 
         setExpandRatio(contentPanel, 1.0f);
         setSizeFull();
+    }
+
+    public void setUriFragmentEnabled(boolean enabled) {
+        uriFragment.setEnabled(enabled);
+    }
+
+    public boolean isUriFragmentEnabled() {
+        return uriFragment.isEnabled();
     }
 
     public void setHeader(Component header) {
@@ -143,16 +176,28 @@ public class Wizard extends VerticalLayout implements ClickListener {
         this.header = header;
     }
 
-    public void addStep(WizardStep step) {
-        if (currentStep == null) {
-            currentStep = step;
-            displayStep(currentStep);
-        }
-
+    public void addStep(WizardStep step, String id) {
         steps.add(step);
+        idMap.put(id, step);
         updateButtons();
 
+        // notify listeners
         fireEvent(new WizardStepSetChangedEvent(this));
+    }
+
+    @Override
+    public void paintContent(PaintTarget target) throws PaintException {
+        // make sure there is always a step selected
+        if (currentStep == null && !steps.isEmpty()) {
+            // activate the first step
+            activateStep(steps.get(0));
+        }
+
+        super.paintContent(target);
+    }
+
+    public void addStep(WizardStep step) {
+        addStep(step, "wizard-step-" + (steps.size() + 1));
     }
 
     public void addListener(WizardProgressListener listener) {
@@ -216,13 +261,83 @@ public class Wizard extends VerticalLayout implements ClickListener {
         return cancelButton;
     }
 
-    private void displayStep(WizardStep step) {
+    private void activateStep(WizardStep step) {
+        if (step == null) {
+            return;
+        }
+
+        if (currentStep != null) {
+            if (currentStep.equals(step)) {
+                // already active
+                return;
+            }
+
+            // ask if we're allowed to move
+            boolean advancing = steps.indexOf(step) > steps
+                    .indexOf(currentStep);
+            if (advancing) {
+                if (!currentStep.onAdvance()) {
+                    // not allowed to advance
+                    return;
+                }
+            } else {
+                if (!currentStep.onBack()) {
+                    // not allowed to go back
+                    return;
+                }
+            }
+
+            // keep track of the last step that was completed
+            int currentIndex = steps.indexOf(currentStep);
+            if (lastCompletedStep == null
+                    || steps.indexOf(lastCompletedStep) < currentIndex) {
+                lastCompletedStep = currentStep;
+            }
+        }
+
         contentPanel.removeAllComponents();
         contentPanel.addComponent(step.getContent());
         currentStep = step;
 
+        updateUriFragment();
         updateButtons();
         fireEvent(new WizardStepActivationEvent(this, step));
+    }
+
+    private void activateStep(String id) {
+        WizardStep step = idMap.get(id);
+        if (step != null) {
+            // check that we don't go past the lastCompletedStep by using the id
+            int lastCompletedIndex = lastCompletedStep == null ? -1 : steps
+                    .indexOf(lastCompletedStep);
+            int stepIndex = steps.indexOf(step);
+
+            if (lastCompletedIndex < stepIndex) {
+                activateStep(lastCompletedStep);
+            } else {
+                activateStep(step);
+            }
+        }
+    }
+
+    private String getId(WizardStep step) {
+        for (Map.Entry<String, WizardStep> entry : idMap.entrySet()) {
+            if (entry.getValue().equals(step)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private void updateUriFragment() {
+        if (uriFragment.isEnabled()) {
+            String currentStepId = getId(currentStep);
+            if (currentStepId != null && currentStepId.length() > 0) {
+                uriFragment.setFragment(currentStepId, false);
+            } else {
+                uriFragment.setFragment(null, false);
+            }
+        }
     }
 
     private boolean isFirstStep(WizardStep step) {
@@ -257,18 +372,22 @@ public class Wizard extends VerticalLayout implements ClickListener {
     }
 
     private void nextButtonClick(ClickEvent event) {
-        if (currentStep.onAdvance()) {
-            // next allowed -> display next step
-            int currentIndex = steps.indexOf(currentStep);
-            displayStep(steps.get(currentIndex + 1));
-        }
+        int currentIndex = steps.indexOf(currentStep);
+        activateStep(steps.get(currentIndex + 1));
     }
 
     private void backButtonClick(ClickEvent event) {
-        if (currentStep.onBack()) {
-            // back allowed
-            int currentIndex = steps.indexOf(currentStep);
-            displayStep(steps.get(currentIndex - 1));
+        int currentIndex = steps.indexOf(currentStep);
+        activateStep(steps.get(currentIndex - 1));
+    }
+
+    public void fragmentChanged(FragmentChangedEvent source) {
+        String fragment = source.getUriFragmentUtility().getFragment();
+        if (fragment.equals("") && !steps.isEmpty()) {
+            // empty fragment -> set the fragment of first step
+            uriFragment.setFragment(getId(steps.get(0)));
+        } else {
+            activateStep(fragment);
         }
     }
 

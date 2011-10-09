@@ -39,11 +39,12 @@ public class WizardsDemoApplication extends Application implements
 
         // create the Wizard component and add the steps
         wizard = new Wizard();
+        wizard.setUriFragmentEnabled(true);
         wizard.addListener(this);
-        wizard.addStep(new IntroStep());
-        wizard.addStep(new SetupStep());
-        wizard.addStep(new ListenStep());
-        wizard.addStep(new LastStep(wizard));
+        wizard.addStep(new IntroStep(), "intro");
+        wizard.addStep(new SetupStep(), "setup");
+        wizard.addStep(new ListenStep(), "listen");
+        wizard.addStep(new LastStep(wizard), "last");
         wizard.setHeight("600px");
         wizard.setWidth("800px");
 
