@@ -20,6 +20,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UriFragmentUtility;
@@ -73,11 +74,13 @@ import com.vaadin.ui.VerticalLayout;
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
-public class Wizard extends VerticalLayout implements ClickListener,
+public class Wizard extends CustomComponent implements ClickListener,
         FragmentChangedListener {
 
     private final List<WizardStep> steps = new ArrayList<WizardStep>();
     private final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
+
+    private VerticalLayout mainLayout;
 
     private Panel contentPanel;
 
@@ -123,6 +126,10 @@ public class Wizard extends VerticalLayout implements ClickListener,
     }
 
     private void init() {
+        mainLayout = new VerticalLayout();
+        setCompositionRoot(mainLayout);
+        setSizeFull();
+
         uriFragment = new UriFragmentUtility();
         uriFragment.addListener(this);
         uriFragment.setEnabled(false); // disabled by default
@@ -150,13 +157,13 @@ public class Wizard extends VerticalLayout implements ClickListener,
         footer.addComponent(nextButton);
         footer.addComponent(finishButton);
 
-        addComponent(contentPanel);
-        addComponent(footer);
-        addComponent(uriFragment);
-        setComponentAlignment(footer, Alignment.BOTTOM_RIGHT);
+        mainLayout.addComponent(contentPanel);
+        mainLayout.addComponent(footer);
+        mainLayout.addComponent(uriFragment);
+        mainLayout.setComponentAlignment(footer, Alignment.BOTTOM_RIGHT);
 
-        setExpandRatio(contentPanel, 1.0f);
-        setSizeFull();
+        mainLayout.setExpandRatio(contentPanel, 1.0f);
+        mainLayout.setSizeFull();
     }
 
     public void setUriFragmentEnabled(boolean enabled) {
@@ -169,9 +176,9 @@ public class Wizard extends VerticalLayout implements ClickListener,
 
     public void setHeader(Component header) {
         if (this.header != null) {
-            replaceComponent(this.header, header);
+            mainLayout.replaceComponent(this.header, header);
         } else {
-            addComponentAsFirst(header);
+            mainLayout.addComponentAsFirst(header);
         }
         this.header = header;
     }
