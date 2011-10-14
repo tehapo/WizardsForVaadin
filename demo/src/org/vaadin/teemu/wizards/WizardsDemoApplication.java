@@ -48,11 +48,6 @@ public class WizardsDemoApplication extends Application implements
         wizard.setHeight("600px");
         wizard.setWidth("800px");
 
-        // setup the progress bar
-        WizardProgressBar progressBar = new WizardProgressBar(wizard);
-        wizard.addListener(progressBar);
-        wizard.setHeader(progressBar);
-
         mainLayout.addComponent(wizard);
         mainLayout.setComponentAlignment(wizard, Alignment.TOP_CENTER);
         setTheme("demo");

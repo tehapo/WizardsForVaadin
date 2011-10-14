@@ -27,11 +27,13 @@ public class ListenStep implements WizardStep {
     private Label getText() {
         return new Label(
                 "<h2>Listen for Progress</h2><p class=\"narrow\">The <code>WizardProgressListener</code> provides lifecycle methods to react "
-                        + "on the progress made by user.</p><p class=\"narrow\">The add-on package contains a default progress bar for displaying the progress but you "
-                        + "can also use any other implementations of the interface for displaying the progress.</p>"
-                        + "<p>Use the following code to display the default <code>WizardProgressBar</code> as the header. Note that it has client-side GWT code so using "
-                        + "it requires widgetset compilation.</p>"
-                        + "<pre>WizardProgressBar progressBar = new WizardProgressBar(wizard);\nmyWizard.addListener(progressBar);\nmyWizard.setHeader(progressBar);</pre>",
+                        + "on the progress made by user.</p><p class=\"narrow\">By default the add-on displays a default <code>WizardProgressBar</code> (as seen above) for displaying the progress. You "
+                        + "can also use any other implementation of the interface for displaying the progress.</p>"
+                        + "<p>To register a new listener, use the <code>addListener</code> method of the <code>Wizard</code> class. For removal there is also <code>removeListener</code> method.</p>"
+                        + "<pre>WizardProgressListener myListener = new MyProgressListener();\nmyWizard.addListener(myListener);</pre>"
+                        + "<p>If you don't want to display the default progress bar, you can hide it by calling <code>setHeader(null)</code>. "
+                        + "The default progress bar component is also registered as a listener, so a good practice would be also to remove it (unless you want to display it in any other place on your application).</p>"
+                        + "<pre>Component defaultHeader = myWizard.getHeader();\nif (defaultHeader instanceof WizardProgressListener) {\n    myWizard.removeListener((WizardProgressListener) defaultHeader);\n}\nmyWizard.setHeader(null);</pre>",
                 Label.CONTENT_XHTML);
     }
 

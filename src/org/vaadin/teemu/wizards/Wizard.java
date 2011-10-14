@@ -53,23 +53,6 @@ import com.vaadin.ui.VerticalLayout;
  * {@link #removeListener(WizardProgressListener)}.
  * </p>
  * 
- * <p>
- * To use the default progress bar {@link WizardProgressBar} you should register
- * an instance of it as a listener and set it as the header of this
- * {@link Wizard} or optionally display it in another place in your application.
- * <br />
- * <br />
- * Example on using the progress bar:
- * 
- * <pre>
- * Wizard myWizard = new Wizard();
- * WizardProgressBar progressBar = new WizardProgressBar(wizard);
- * myWizard.addListener(progressBar);
- * myWizard.setHeader(progressBar);
- * </pre>
- * 
- * </p>
- * 
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
@@ -151,6 +134,8 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
         mainLayout.setExpandRatio(contentPanel, 1.0f);
         mainLayout.setSizeFull();
+
+        initDefaultHeader();
     }
 
     private void initControlButtons() {
@@ -184,6 +169,12 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         });
     }
 
+    private void initDefaultHeader() {
+        WizardProgressBar progressBar = new WizardProgressBar(this);
+        addListener(progressBar);
+        setHeader(progressBar);
+    }
+
     public void setUriFragmentEnabled(boolean enabled) {
         uriFragment.setEnabled(enabled);
     }
@@ -192,13 +183,43 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         return uriFragment.isEnabled();
     }
 
-    public void setHeader(Component header) {
-        if (this.header != null) {
-            mainLayout.replaceComponent(this.header, header);
+    /**
+     * Sets a {@link Component} that is displayed on top of the actual content.
+     * Set to {@code null} to remove the header altogether.
+     * 
+     * @param newHeader
+     *            {@link Component} to be displayed on top of the actual content
+     *            or {@code null} to remove the header.
+     */
+    public void setHeader(Component newHeader) {
+        if (header != null) {
+            if (newHeader == null) {
+                mainLayout.removeComponent(header);
+            } else {
+                mainLayout.replaceComponent(header, newHeader);
+            }
         } else {
-            mainLayout.addComponentAsFirst(header);
+            if (newHeader != null) {
+                mainLayout.addComponentAsFirst(newHeader);
+            }
         }
-        this.header = header;
+        this.header = newHeader;
+    }
+
+    /**
+     * Returns a {@link Component} that is displayed on top of the actual
+     * content or {@code null} if no header is specified.
+     * 
+     * <p>
+     * By default the header is a {@link WizardProgressBar} component that is
+     * also registered as a {@link WizardProgressListener} to this Wizard.
+     * </p>
+     * 
+     * @return {@link Component} that is displayed on top of the actual content
+     *         or {@code null}.
+     */
+    public Component getHeader() {
+        return header;
     }
 
     public void addStep(WizardStep step, String id) {
