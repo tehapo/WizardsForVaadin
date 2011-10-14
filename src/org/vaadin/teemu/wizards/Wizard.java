@@ -18,7 +18,6 @@ import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
@@ -74,8 +73,7 @@ import com.vaadin.ui.VerticalLayout;
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
-public class Wizard extends CustomComponent implements ClickListener,
-        FragmentChangedListener {
+public class Wizard extends CustomComponent implements FragmentChangedListener {
 
     private final List<WizardStep> steps = new ArrayList<WizardStep>();
     private final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
@@ -137,18 +135,7 @@ public class Wizard extends CustomComponent implements ClickListener,
         contentPanel = new Panel();
         contentPanel.setSizeFull();
 
-        nextButton = new Button("Next");
-        nextButton.addListener(this);
-
-        backButton = new Button("Back");
-        backButton.addListener(this);
-
-        finishButton = new Button("Finish");
-        finishButton.addListener(this);
-        finishButton.setEnabled(false);
-
-        cancelButton = new Button("Cancel");
-        cancelButton.addListener(this);
+        initControlButtons();
 
         HorizontalLayout footer = new HorizontalLayout();
         footer.setSpacing(true);
@@ -164,6 +151,37 @@ public class Wizard extends CustomComponent implements ClickListener,
 
         mainLayout.setExpandRatio(contentPanel, 1.0f);
         mainLayout.setSizeFull();
+    }
+
+    private void initControlButtons() {
+        nextButton = new Button("Next");
+        nextButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                next();
+            }
+        });
+
+        backButton = new Button("Back");
+        backButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                back();
+            }
+        });
+
+        finishButton = new Button("Finish");
+        finishButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                finish();
+            }
+        });
+        finishButton.setEnabled(false);
+
+        cancelButton = new Button("Cancel");
+        cancelButton.addListener(new Button.ClickListener() {
+            public void buttonClick(ClickEvent event) {
+                cancel();
+            }
+        });
     }
 
     public void setUriFragmentEnabled(boolean enabled) {
@@ -348,44 +366,64 @@ public class Wizard extends CustomComponent implements ClickListener,
     }
 
     private boolean isFirstStep(WizardStep step) {
-        return steps.indexOf(step) == 0;
+        if (step != null) {
+            return steps.indexOf(step) == 0;
+        }
+        return false;
     }
 
     private boolean isLastStep(WizardStep step) {
-        return steps.indexOf(step) == (steps.size() - 1);
-    }
-
-    public void buttonClick(ClickEvent event) {
-        if (event.getButton() == nextButton) {
-            nextButtonClick(event);
-        } else if (event.getButton() == backButton) {
-            backButtonClick(event);
-        } else if (event.getButton() == finishButton) {
-            finishButtonClick(event);
-        } else if (event.getButton() == cancelButton) {
-            cancelButtonClick(event);
+        if (step != null && !steps.isEmpty()) {
+            return steps.indexOf(step) == (steps.size() - 1);
         }
+        return false;
     }
 
-    private void cancelButtonClick(ClickEvent event) {
+    /**
+     * Cancels this Wizard triggering a {@link WizardCancelledEvent}. This
+     * method is called when user clicks the cancel button.
+     */
+    public void cancel() {
         fireEvent(new WizardCancelledEvent(this));
     }
 
-    private void finishButtonClick(ClickEvent event) {
-        if (currentStep.onAdvance()) {
+    /**
+     * Triggers a {@link WizardCompletedEvent} if the current step is the last
+     * step and it allows advancing (see {@link WizardStep#onAdvance()}). This
+     * method is called when user clicks the finish button.
+     */
+    public void finish() {
+        if (isLastStep(currentStep) && currentStep.onAdvance()) {
             // next (finish) allowed -> fire complete event
             fireEvent(new WizardCompletedEvent(this));
         }
     }
 
-    private void nextButtonClick(ClickEvent event) {
-        int currentIndex = steps.indexOf(currentStep);
-        activateStep(steps.get(currentIndex + 1));
+    /**
+     * Activates the next {@link WizardStep} if the current step allows
+     * advancing (see {@link WizardStep#onAdvance()}) or calls the
+     * {@link #finish()} method the current step is the last step. This method
+     * is called when user clicks the next button.
+     */
+    public void next() {
+        if (isLastStep(currentStep)) {
+            finish();
+        } else {
+            int currentIndex = steps.indexOf(currentStep);
+            activateStep(steps.get(currentIndex + 1));
+        }
     }
 
-    private void backButtonClick(ClickEvent event) {
+    /**
+     * Activates the previous {@link WizardStep} if the current step allows
+     * going back (see {@link WizardStep#onBack()}) and the current step is not
+     * the first step. This method is called when user clicks the back button.
+     */
+    public void back() {
         int currentIndex = steps.indexOf(currentStep);
-        activateStep(steps.get(currentIndex - 1));
+        if (currentIndex > 0) {
+            activateStep(steps.get(currentIndex - 1));
+        }
     }
 
     public void fragmentChanged(FragmentChangedEvent source) {
