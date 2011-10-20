@@ -33,7 +33,7 @@ public interface WizardProgressListener {
      *            {@link WizardCompletedEvent} object containing details about
      *            the event
      */
-    public void wizardCompleted(WizardCompletedEvent event);
+    void wizardCompleted(WizardCompletedEvent event);
 
     /**
      * Called when a {@link Wizard} is cancelled by the user.
@@ -42,6 +42,6 @@ public interface WizardProgressListener {
      *            {@link WizardCancelledEvent} object containing details about
      *            the event
      */
-    public void wizardCancelled(WizardCancelledEvent event);
+    void wizardCancelled(WizardCancelledEvent event);
 
 }
