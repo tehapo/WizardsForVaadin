@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Implementation-Title: Wizards for Vaadin
-Implementation-Version: 0.3.0
+Implementation-Version: 0.4.0
 Vaadin-Package-Version: 1
-Class-Path: 
 Vaadin-Widgetsets: org.vaadin.teemu.wizards.WizardsforvaadinWidgetset
+Class-Path: 
 
