@@ -272,10 +272,24 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         return Collections.unmodifiableList(steps);
     }
 
+    /**
+     * Returns {@code true} if the given step is already completed by the user.
+     * 
+     * @param step
+     *            step to check for completion.
+     * @return {@code true} if the given step is already completed.
+     */
     public boolean isCompleted(WizardStep step) {
         return steps.indexOf(step) < steps.indexOf(currentStep);
     }
 
+    /**
+     * Returns {@code true} if the given step is the currently active step.
+     * 
+     * @param step
+     *            step to check for.
+     * @return {@code true} if the given step is the currently active step.
+     */
     public boolean isActive(WizardStep step) {
         return (step == currentStep);
     }
@@ -454,6 +468,58 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
             uriFragment.setFragment(getId(steps.get(0)));
         } else {
             activateStep(fragment);
+        }
+    }
+
+    /**
+     * Removes the given step from this Wizard. An {@link IllegalStateException}
+     * is thrown if the given step is already completed or is the currently
+     * active step.
+     * 
+     * @param stepToRemove
+     *            the step to remove.
+     * @see #isCompleted(WizardStep)
+     * @see #isActive(WizardStep)
+     */
+    public void removeStep(WizardStep stepToRemove) {
+        if (idMap.containsValue(stepToRemove)) {
+            for (Map.Entry<String, WizardStep> entry : idMap.entrySet()) {
+                if (entry.getValue().equals(stepToRemove)) {
+                    // delegate the actual removal to the overloaded method
+                    removeStep(entry.getKey());
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes the step with given id from this Wizard. An
+     * {@link IllegalStateException} is thrown if the given step is already
+     * completed or is the currently active step.
+     * 
+     * @param id
+     *            identifier of the step to remove.
+     * @see #isCompleted(WizardStep)
+     * @see #isActive(WizardStep)
+     */
+    public void removeStep(String id) {
+        if (idMap.containsKey(id)) {
+            WizardStep stepToRemove = idMap.get(id);
+            if (isCompleted(stepToRemove)) {
+                throw new IllegalStateException(
+                        "Already completed step cannot be removed.");
+            }
+            if (isActive(stepToRemove)) {
+                throw new IllegalStateException(
+                        "Currently active step cannot be removed.");
+            }
+
+            idMap.remove(id);
+            steps.remove(stepToRemove);
+
+            // notify listeners
+            fireEvent(new WizardStepSetChangedEvent(this));
         }
     }
 
