@@ -111,10 +111,6 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         setCompositionRoot(mainLayout);
         setSizeFull();
 
-        uriFragment = new UriFragmentUtility();
-        uriFragment.addListener(this);
-        uriFragment.setEnabled(false); // disabled by default
-
         contentPanel = new Panel();
         contentPanel.setSizeFull();
 
@@ -129,7 +125,6 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
         mainLayout.addComponent(contentPanel);
         mainLayout.addComponent(footer);
-        mainLayout.addComponent(uriFragment);
         mainLayout.setComponentAlignment(footer, Alignment.BOTTOM_RIGHT);
 
         mainLayout.setExpandRatio(contentPanel, 1.0f);
@@ -176,11 +171,18 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     }
 
     public void setUriFragmentEnabled(boolean enabled) {
-        uriFragment.setEnabled(enabled);
+        if (enabled && uriFragment == null) {
+            uriFragment = new UriFragmentUtility();
+            uriFragment.addListener(this);
+            mainLayout.addComponent(uriFragment);
+        }
+        if (uriFragment != null) {
+            uriFragment.setEnabled(enabled);
+        }
     }
 
     public boolean isUriFragmentEnabled() {
-        return uriFragment.isEnabled();
+        return uriFragment != null && uriFragment.isEnabled();
     }
 
     /**
@@ -390,7 +392,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     }
 
     private void updateUriFragment() {
-        if (uriFragment.isEnabled()) {
+        if (isUriFragmentEnabled()) {
             String currentStepId = getId(currentStep);
             if (currentStepId != null && currentStepId.length() > 0) {
                 uriFragment.setFragment(currentStepId, false);
@@ -462,12 +464,14 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     }
 
     public void fragmentChanged(FragmentChangedEvent source) {
-        String fragment = source.getUriFragmentUtility().getFragment();
-        if (fragment.equals("") && !steps.isEmpty()) {
-            // empty fragment -> set the fragment of first step
-            uriFragment.setFragment(getId(steps.get(0)));
-        } else {
-            activateStep(fragment);
+        if (isUriFragmentEnabled()) {
+            String fragment = source.getUriFragmentUtility().getFragment();
+            if (fragment.equals("") && !steps.isEmpty()) {
+                // empty fragment -> set the fragment of first step
+                uriFragment.setFragment(getId(steps.get(0)));
+            } else {
+                activateStep(fragment);
+            }
         }
     }
 
