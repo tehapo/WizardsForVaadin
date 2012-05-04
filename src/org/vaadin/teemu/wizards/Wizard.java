@@ -58,11 +58,16 @@ import com.vaadin.ui.VerticalLayout;
 @SuppressWarnings("serial")
 public class Wizard extends CustomComponent implements FragmentChangedListener {
 
-    private final List<WizardStep> steps = new ArrayList<WizardStep>();
-    private final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
+    protected final List<WizardStep> steps = new ArrayList<WizardStep>();
+    protected final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
 
-    private VerticalLayout mainLayout;
+    protected WizardStep currentStep;
+    protected WizardStep lastCompletedStep;
 
+    private int stepIndex = 1;
+
+    protected VerticalLayout mainLayout;
+    protected HorizontalLayout footer;
     private Panel contentPanel;
 
     private Button nextButton;
@@ -70,12 +75,8 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     private Button finishButton;
     private Button cancelButton;
 
-    private WizardStep currentStep;
-    private WizardStep lastCompletedStep;
     private Component header;
     private UriFragmentUtility uriFragment;
-
-    private int stepIndex = 1;
 
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
@@ -118,7 +119,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
         initControlButtons();
 
-        HorizontalLayout footer = new HorizontalLayout();
+        footer = new HorizontalLayout();
         footer.setSpacing(true);
         footer.addComponent(cancelButton);
         footer.addComponent(backButton);
@@ -351,7 +352,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         return cancelButton;
     }
 
-    private void activateStep(WizardStep step) {
+    protected void activateStep(WizardStep step) {
         if (step == null) {
             return;
         }
@@ -394,7 +395,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         fireEvent(new WizardStepActivationEvent(this, step));
     }
 
-    private void activateStep(String id) {
+    protected void activateStep(String id) {
         WizardStep step = idMap.get(id);
         if (step != null) {
             // check that we don't go past the lastCompletedStep by using the id
@@ -410,7 +411,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         }
     }
 
-    private String getId(WizardStep step) {
+    protected String getId(WizardStep step) {
         for (Map.Entry<String, WizardStep> entry : idMap.entrySet()) {
             if (entry.getValue().equals(step)) {
                 return entry.getKey();
@@ -430,14 +431,14 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         }
     }
 
-    private boolean isFirstStep(WizardStep step) {
+    protected boolean isFirstStep(WizardStep step) {
         if (step != null) {
             return steps.indexOf(step) == 0;
         }
         return false;
     }
 
-    private boolean isLastStep(WizardStep step) {
+    protected boolean isLastStep(WizardStep step) {
         if (step != null && !steps.isEmpty()) {
             return steps.indexOf(step) == (steps.size() - 1);
         }
