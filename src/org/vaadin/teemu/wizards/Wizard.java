@@ -75,6 +75,8 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     private Component header;
     private UriFragmentUtility uriFragment;
 
+    private int stepIndex = 1;
+
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
     private static final Method WIZARD_COMPLETED_METHOD;
@@ -224,7 +226,25 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         return header;
     }
 
+    /**
+     * Adds a step to this Wizard with the given identifier. The used {@code id}
+     * must be unique or an {@link IllegalArgumentException} is thrown. If you
+     * don't wish to explicitly provide an identifier, you can use the
+     * {@link #addStep(WizardStep)} method.
+     * 
+     * @param step
+     * @param id
+     * @throws IllegalStateException
+     *             if the given {@code id} already exists.
+     */
     public void addStep(WizardStep step, String id) {
+        if (idMap.containsKey(id)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "A step with given id %s already exists. You must use unique identifiers for the steps.",
+                            id));
+        }
+
         steps.add(step);
         idMap.put(id, step);
         updateButtons();
@@ -244,8 +264,16 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         super.paintContent(target);
     }
 
+    /**
+     * Adds a step to this Wizard. The WizardStep will be assigned an identifier
+     * automatically. If you wish to provide an explicit identifier for your
+     * WizardStep, you can use the {@link #addStep(WizardStep, String)} method
+     * instead.
+     * 
+     * @param step
+     */
     public void addStep(WizardStep step) {
-        addStep(step, "wizard-step-" + (steps.size() + 1));
+        addStep(step, "wizard-step-" + stepIndex++);
     }
 
     public void addListener(WizardProgressListener listener) {
