@@ -4,7 +4,7 @@ Notice that this page is written for the Wizards for Vaadin version 0.4.0. If yo
 
 ## Installation
 
-Install the add-on to your Vaadin project by simply copying the JAR file from [Vaadin Directory](http://vaadin.com/addon/wizards-for-vaadin Vaadin Directory) and *compiling your widgetset* (more details [here](http://vaadin.com/directory/help/using-vaadin-add-ons here)). Or alternatively you can add the add-on to your project using Maven (see the Maven POM snippet required from [Vaadin Directory](http://vaadin.com/addon/wizards-for-vaadin Vaadin Directory)).
+Install the add-on to your Vaadin project by simply copying the JAR file from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin) and *compiling your widgetset* (more details [here](https://vaadin.com/directory/help/using-vaadin-add-ons)). Or alternatively you can add the add-on to your project using Maven (see the Maven POM snippet required from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin)).
 
 ## Basic Usage
 
