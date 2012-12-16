@@ -68,7 +68,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
     protected VerticalLayout mainLayout;
     protected HorizontalLayout footer;
-    private Panel contentPanel;
+    protected Panel contentPanel;
 
     private Button nextButton;
     private Button backButton;
