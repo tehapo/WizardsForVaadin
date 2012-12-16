@@ -68,7 +68,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
     protected VerticalLayout mainLayout;
     protected HorizontalLayout footer;
-    protected Panel contentPanel;
+    private Panel contentPanel;
 
     private Button nextButton;
     private Button backButton;
@@ -386,8 +386,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
             }
         }
 
-        contentPanel.removeAllComponents();
-        contentPanel.addComponent(step.getContent());
+        addStepComponent(contentPanel, step);
         currentStep = step;
 
         updateUriFragment();
@@ -395,7 +394,12 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         fireEvent(new WizardStepActivationEvent(this, step));
     }
 
-    protected void activateStep(String id) {
+    protected void addStepComponent(Panel wizardContentPanel, WizardStep step) {
+        wizardContentPanel.removeAllComponents();
+        wizardContentPanel.addComponent(step.getContent());
+    }
+
+  protected void activateStep(String id) {
         WizardStep step = idMap.get(id);
         if (step != null) {
             // check that we don't go past the lastCompletedStep by using the id
