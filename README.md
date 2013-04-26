@@ -6,7 +6,7 @@ Starting from version 1.0.0-beta1 Wizards for Vaadin supports only Vaadin 7. The
 
 ## Installation
 
-Install the add-on to your Vaadin project by simply copying the JAR file from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin) and *compiling your widgetset* (more details [here](https://vaadin.com/directory/help/using-vaadin-add-ons)). Or alternatively you can add the add-on to your project using Maven (see the Maven POM snippet required from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin)).
+Install the add-on to your Vaadin project by simply copying the JAR file from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin) or add the add-on to your project using Maven or Ivy (see the Maven/Ivy configuration snippet required from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin)).
 
 ## Basic Usage
 
