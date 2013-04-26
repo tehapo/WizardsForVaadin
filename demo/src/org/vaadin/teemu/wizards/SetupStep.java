@@ -1,5 +1,6 @@
 package org.vaadin.teemu.wizards;
 
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -12,6 +13,8 @@ public class SetupStep implements WizardStep {
 
     public Component getContent() {
         VerticalLayout content = new VerticalLayout();
+        content.setSizeFull();
+        content.setMargin(true);
 
         Label text = getText();
         content.addComponent(text);
@@ -26,7 +29,7 @@ public class SetupStep implements WizardStep {
                         + "calling the <code>addStep</code> method. The method accepts instances of the <code>WizardStep</code> interface "
                         + "so you need to implement that in order to display your steps."
                         + "<pre>myWizard.addStep(new FirstStep());\nmyWizard.addStep(new SecondStep());\nmyWizard.addStep(new ThirdStep());\nmyWizard.addStep(new FourthStep());</pre>",
-                Label.CONTENT_XHTML);
+                ContentMode.HTML);
     }
 
     public boolean onAdvance() {

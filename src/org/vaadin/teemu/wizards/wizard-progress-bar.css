@@ -1,0 +1,26 @@
+.wizard-progress-bar .v-progressindicator-wrapper {
+	background: transparent;
+	border: none;
+	height: 10px;
+}
+.wizard-progress-bar .v-progressindicator-indicator {
+	height: 100%;
+	background-color: #00b3ef; 
+	background: -moz-linear-gradient(center top , #20D4FF, #009CD0) repeat-x scroll left top transparent;
+	background: -webkit-gradient(linear, left top, left bottom, from(#20d4ff), to(#009cd0)) top left repeat-x;
+	-moz-transition: width 0.5s ease-out 0s;
+	-webkit-transition: width 0.5s ease-out 0s;
+}
+.wizard-progress-bar .v-label-step-caption {
+	font-size: 13px;
+	white-space: nowrap;
+	text-align: center;
+	color: #bfbfbf;
+}
+.wizard-progress-bar .v-label-current,
+.wizard-progress-bar .v-label-completed {
+	color: #000;	
+}
+.wizard-progress-bar .v-label-current {
+	font-weight: bold;
+}

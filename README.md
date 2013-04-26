@@ -1,6 +1,6 @@
 ## Getting Started
 
-Notice that this page is written for the Wizards for Vaadin version 0.4.0. If you are using some other version, the API might differ and all features might not be available.
+Notice that this page is written for the Wizards for Vaadin version 1.0.0-beta1. If you are using some other version, the API might differ and all features might not be available.
 
 ## Installation
 
@@ -21,7 +21,7 @@ wizard.addStep(new ThirdStep());
 wizard.addStep(new FourthStep());
 
 // add the wizard to a layout
-mainLayout.addComponent(wizard);        
+mainLayout.addComponent(wizard);
 ```
 
 ## Lifecycle Events of the Wizard
@@ -33,7 +33,7 @@ To listen for the completion, cancellation or progress of the wizard, you should
 wizard.addListener(new MyWizardListener());
 ```
 
-By default every ```Wizard``` instance have one ```WizardProgressListener``` assigned. This is the default progress bar displayed as the header of the ```Wizard```. If you would like to remove it, you can remove the header by calling ```setHeader(null)```. A good practice is also to remove it from listening to the events. You can do it with the following code. 
+By default every ```Wizard``` instance have one ```WizardProgressListener``` assigned. This is the default progress bar displayed as the header of the ```Wizard```. If you would like to remove it, you can remove the header by calling ```setHeader(null)```. A good practice is also to remove it from listening to the events. You can do it with the following code.
 
 ```java
 Component defaultHeader = wizard.getHeader();
@@ -42,7 +42,7 @@ if (defaultHeader instanceof WizardProgressListener) {
 }
 wizard.setHeader(null);
 ```
-Of course you can also leave the default header as a listener and attach it into your own layout. 
+Of course you can also leave the default header as a listener and attach it into your own layout.
 
 ## Localization of the Button Captions
 

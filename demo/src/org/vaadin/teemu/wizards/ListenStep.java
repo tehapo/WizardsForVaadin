@@ -1,6 +1,7 @@
 package org.vaadin.teemu.wizards;
 
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
@@ -14,6 +15,8 @@ public class ListenStep implements WizardStep {
 
     public Component getContent() {
         VerticalLayout content = new VerticalLayout();
+        content.setSizeFull();
+        content.setMargin(true);
 
         Label text = getText();
         content.addComponent(text);
@@ -34,7 +37,7 @@ public class ListenStep implements WizardStep {
                         + "<p>If you don't want to display the default progress bar, you can hide it by calling <code>setHeader(null)</code>. "
                         + "The default progress bar component is also registered as a listener, so a good practice would be also to remove it (unless you want to display it in any other place on your application).</p>"
                         + "<pre>Component defaultHeader = myWizard.getHeader();\nif (defaultHeader instanceof WizardProgressListener) {\n    myWizard.removeListener((WizardProgressListener) defaultHeader);\n}\nmyWizard.setHeader(null);</pre>",
-                Label.CONTENT_XHTML);
+                ContentMode.HTML);
     }
 
     private Embedded getArrow() {

@@ -13,8 +13,9 @@ import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
 import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.server.Page;
+import com.vaadin.server.Page.UriFragmentChangedEvent;
+import com.vaadin.server.Page.UriFragmentChangedListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -22,9 +23,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.UriFragmentUtility;
-import com.vaadin.ui.UriFragmentUtility.FragmentChangedEvent;
-import com.vaadin.ui.UriFragmentUtility.FragmentChangedListener;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -56,7 +54,8 @@ import com.vaadin.ui.VerticalLayout;
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
-public class Wizard extends CustomComponent implements FragmentChangedListener {
+public class Wizard extends CustomComponent implements
+        UriFragmentChangedListener {
 
     protected final List<WizardStep> steps = new ArrayList<WizardStep>();
     protected final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
@@ -76,7 +75,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     private Button cancelButton;
 
     private Component header;
-    private UriFragmentUtility uriFragment;
+    private boolean uriFragmentEnabled;
 
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
@@ -138,21 +137,21 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
     private void initControlButtons() {
         nextButton = new Button("Next");
-        nextButton.addListener(new Button.ClickListener() {
+        nextButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 next();
             }
         });
 
         backButton = new Button("Back");
-        backButton.addListener(new Button.ClickListener() {
+        backButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 back();
             }
         });
 
         finishButton = new Button("Finish");
-        finishButton.addListener(new Button.ClickListener() {
+        finishButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 finish();
             }
@@ -160,7 +159,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         finishButton.setEnabled(false);
 
         cancelButton = new Button("Cancel");
-        cancelButton.addListener(new Button.ClickListener() {
+        cancelButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
                 cancel();
             }
@@ -174,18 +173,16 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
     }
 
     public void setUriFragmentEnabled(boolean enabled) {
-        if (enabled && uriFragment == null) {
-            uriFragment = new UriFragmentUtility();
-            uriFragment.addListener(this);
-            mainLayout.addComponent(uriFragment);
+        if (enabled) {
+            Page.getCurrent().addUriFragmentChangedListener(this);
+        } else {
+            Page.getCurrent().removeUriFragmentChangedListener(this);
         }
-        if (uriFragment != null) {
-            uriFragment.setEnabled(enabled);
-        }
+        uriFragmentEnabled = enabled;
     }
 
     public boolean isUriFragmentEnabled() {
-        return uriFragment != null && uriFragment.isEnabled();
+        return uriFragmentEnabled;
     }
 
     /**
@@ -252,17 +249,11 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
 
         // notify listeners
         fireEvent(new WizardStepSetChangedEvent(this));
-    }
 
-    @Override
-    public void paintContent(PaintTarget target) throws PaintException {
-        // make sure there is always a step selected
-        if (currentStep == null && !steps.isEmpty()) {
-            // activate the first step
-            activateStep(steps.get(0));
+        // activate the first step immediately
+        if (currentStep == null) {
+            activateStep(step);
         }
-
-        super.paintContent(target);
     }
 
     /**
@@ -386,8 +377,7 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
             }
         }
 
-        contentPanel.removeAllComponents();
-        contentPanel.addComponent(step.getContent());
+        contentPanel.setContent(step.getContent());
         currentStep = step;
 
         updateUriFragment();
@@ -424,9 +414,9 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         if (isUriFragmentEnabled()) {
             String currentStepId = getId(currentStep);
             if (currentStepId != null && currentStepId.length() > 0) {
-                uriFragment.setFragment(currentStepId, false);
+                Page.getCurrent().setUriFragment(currentStepId, false);
             } else {
-                uriFragment.setFragment(null, false);
+                Page.getCurrent().setUriFragment(null, false);
             }
         }
     }
@@ -492,12 +482,13 @@ public class Wizard extends CustomComponent implements FragmentChangedListener {
         }
     }
 
-    public void fragmentChanged(FragmentChangedEvent source) {
+    @Override
+    public void uriFragmentChanged(UriFragmentChangedEvent event) {
         if (isUriFragmentEnabled()) {
-            String fragment = source.getUriFragmentUtility().getFragment();
+            String fragment = event.getUriFragment();
             if (fragment.equals("") && !steps.isEmpty()) {
                 // empty fragment -> set the fragment of first step
-                uriFragment.setFragment(getId(steps.get(0)));
+                Page.getCurrent().setUriFragment(getId(steps.get(0)));
             } else {
                 activateStep(fragment);
             }
