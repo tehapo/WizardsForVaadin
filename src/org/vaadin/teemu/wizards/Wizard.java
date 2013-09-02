@@ -486,7 +486,7 @@ public class Wizard extends CustomComponent implements
     public void uriFragmentChanged(UriFragmentChangedEvent event) {
         if (isUriFragmentEnabled()) {
             String fragment = event.getUriFragment();
-            if (fragment.equals("") && !steps.isEmpty()) {
+            if ((fragment == null || fragment.equals("")) && !steps.isEmpty()) {
                 // empty fragment -> set the fragment of first step
                 Page.getCurrent().setUriFragment(getId(steps.get(0)));
             } else {
