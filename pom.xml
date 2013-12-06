@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.vaadin.addons</groupId>
+  <artifactId>wizards-for-vaadin-root</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0-beta1</version>
+  <name>WizardsForVaadin</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<vaadin.version>7.1.8</vaadin.version>
+		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+	</properties>
+
+  <modules>
+    <module>wizards-for-vaadin</module>
+    <module>wizards-for-vaadin-demo</module>
+  </modules>
+</project>
