@@ -97,7 +97,6 @@
 						**/VAADIN/gwt-unitCache/**,
 						**/VAADIN/widgetsets/WEB-INF/**,
 						**/WEB-INF/lib/servlet-api-*.jar,
-						**/WEB-INF/lib/vaadin-client-*.jar,
 						**/WEB-INF/lib/jetty-*.jar,
 						**/WEB-INF/lib/ant-*.jar,
 						**/WEB-INF/classes/gwt-unitCache/**,
