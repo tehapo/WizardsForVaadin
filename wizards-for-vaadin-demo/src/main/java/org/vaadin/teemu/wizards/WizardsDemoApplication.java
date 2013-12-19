@@ -1,7 +1,5 @@
 package org.vaadin.teemu.wizards;
 
-import javax.servlet.annotation.WebServlet;
-
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
@@ -9,10 +7,8 @@ import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
 import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
 import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -33,11 +29,6 @@ import com.vaadin.ui.VerticalLayout;
 public class WizardsDemoApplication extends UI implements
         WizardProgressListener {
 
-	@WebServlet(value = "/*", asyncSupported = true)
-	@VaadinServletConfiguration(productionMode = false, ui = WizardsDemoApplication.class)
-	public static class Servlet extends VaadinServlet {
-	}
-	
     private Wizard wizard;
     private VerticalLayout mainLayout;
 
