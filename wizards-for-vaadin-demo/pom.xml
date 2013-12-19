@@ -101,10 +101,10 @@
 			</plugin>
 
 			<plugin>
-		        <artifactId>maven-war-plugin</artifactId>
-		        <version>2.3</version>
-		        <configuration>
-		        	<packagingExcludes>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<packagingExcludes>
 						**/VAADIN/gwt-unitCache/**,
 						**/VAADIN/widgetsets/WEB-INF/**,
 						**/WEB-INF/lib/servlet-api-*.jar,
@@ -116,7 +116,7 @@
 						**/WEB-INF/classes/widgetsets/**
 					</packagingExcludes>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-		        </configuration>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -160,10 +160,11 @@
 			</plugin>
 
 		</plugins>
-	
+
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
