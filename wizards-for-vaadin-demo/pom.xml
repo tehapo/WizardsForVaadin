@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>wizards-for-vaadin-root</artifactId>
 		<groupId>org.vaadin.addons</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>wizards-for-vaadin-demo</artifactId>
 	<packaging>war</packaging>
-	<name>WizardsForVaadin Add-on Demo</name>
+	<name>Wizards for Vaadin Demo</name>
 
 	<repositories>
 		<repository>

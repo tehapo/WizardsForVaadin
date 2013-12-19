@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
-Implementation-Title: Wizards for Vaadin
-Implementation-Version: 1.0.0-beta1
 Vaadin-Package-Version: 1
-Class-Path: 
-
+Vaadin-Addon: ${Vaadin-Addon}
+Vaadin-License-Title: Apache License 2.0
+Implementation-Vendor: Teemu Pöntelin
+Implementation-Title: ${Implementation-Title}
+Implementation-Version: ${Implementation-Version}

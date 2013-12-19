@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>wizards-for-vaadin-root</artifactId>
 		<groupId>org.vaadin.addons</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>wizards-for-vaadin</artifactId>
 	<packaging>jar</packaging>
-	<name>WizardsForVaadin Add-on</name>
+	<name>Wizards for Vaadin</name>
 
 	<properties>
 		<!-- ZIP Manifest fields -->

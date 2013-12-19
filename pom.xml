@@ -5,8 +5,8 @@
 	<groupId>org.vaadin.addons</groupId>
 	<artifactId>wizards-for-vaadin-root</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.0</version>
-	<name>WizardsForVaadin</name>
+	<version>1.0.1</version>
+	<name>Wizards for Vaadin Parent</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
