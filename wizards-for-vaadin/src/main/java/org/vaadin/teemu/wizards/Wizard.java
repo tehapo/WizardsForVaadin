@@ -59,6 +59,7 @@ public class Wizard extends CustomComponent implements
 
     protected final List<WizardStep> steps = new ArrayList<WizardStep>();
     protected final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
+    private final Map<WizardStep, ScrollPosition> scrollPositions = new HashMap<WizardStep, ScrollPosition>();
 
     protected WizardStep currentStep;
     protected WizardStep lastCompletedStep;
@@ -100,6 +101,16 @@ public class Wizard extends CustomComponent implements
             // This should never happen
             throw new java.lang.RuntimeException(
                     "Internal error finding methods in Wizard", e);
+        }
+    }
+
+    private static final class ScrollPosition {
+        int scrollTop;
+        int scrollLeft;
+
+        public ScrollPosition(int scrollTop, int scrollLeft) {
+            this.scrollTop = scrollTop;
+            this.scrollLeft = scrollLeft;
         }
     }
 
@@ -375,14 +386,41 @@ public class Wizard extends CustomComponent implements
                     || steps.indexOf(lastCompletedStep) < currentIndex) {
                 lastCompletedStep = currentStep;
             }
+            saveScrollPosition(currentStep);
         }
 
         contentPanel.setContent(step.getContent());
         currentStep = step;
+        restoreScrollPosition(currentStep);
 
         updateUriFragment();
         updateButtons();
         fireEvent(new WizardStepActivationEvent(this, step));
+    }
+
+    private void restoreScrollPosition(WizardStep step) {
+        ScrollPosition scrollPosition = scrollPositions.get(step);
+        if (scrollPosition != null) {
+            contentPanel.setScrollTop(scrollPosition.scrollTop);
+            contentPanel.setScrollLeft(scrollPosition.scrollLeft);
+        } else {
+            // scroll to top
+            contentPanel.setScrollTop(0);
+            contentPanel.setScrollLeft(0);
+        }
+    }
+
+    private void saveScrollPosition(WizardStep step) {
+        // remove possible old value
+        scrollPositions.remove(step);
+
+        int scrollTop = contentPanel.getScrollTop();
+        int scrollLeft = contentPanel.getScrollLeft();
+        if (scrollTop > 0 || scrollLeft > 0) {
+            // save only if not at the default value (both 0)
+            scrollPositions
+                    .put(step, new ScrollPosition(scrollTop, scrollLeft));
+        }
     }
 
     protected void activateStep(String id) {
