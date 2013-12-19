@@ -8,6 +8,14 @@ Starting from version 1.0.0-beta1 Wizards for Vaadin supports only Vaadin 7. The
 
 Install the add-on to your Vaadin project by simply copying the JAR file from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin) or add the add-on to your project using Maven or Ivy (see the Maven/Ivy configuration snippet required from [Vaadin Directory](https://vaadin.com/addon/wizards-for-vaadin)).
 
+If you want to build it yourself:
+
+```
+mvn clean install
+cd wizards-for-vaadin-demo
+mvn jetty:run
+```
+
 ## Basic Usage
 
 Each step of your wizard must implement the ```WizardStep``` interface and provide the actual content as the return value of the ```getContent()``` method. You should add these steps to the wizard by calling the ```addStep(WizardStep)``` method of an ```Wizard``` instance.
