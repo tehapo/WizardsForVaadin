@@ -2,16 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>wizards-for-vaadin-root</artifactId>
-		<groupId>org.vaadin.addons</groupId>
-		<version>1.0.1</version>
-	</parent>
+	<groupId>org.vaadin.addons</groupId>
 	<artifactId>wizards-for-vaadin</artifactId>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 	<name>Wizards for Vaadin</name>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<vaadin.version>7.1.9</vaadin.version>
+		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
+
 		<!-- ZIP Manifest fields -->
 		<Implementation-Version>${project.version}</Implementation-Version>
 		<!-- Must not change this because of the Directory -->
@@ -71,7 +72,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- This can be replaced with TestNG or some other test framework supported 
+		<!-- This can be replaced with TestNG or some other test framework supported
 			by the surefire plugin -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -176,7 +177,7 @@
 			</plugin>
 		</plugins>
 
-		<!-- This is needed for the sources required by the client-side compiler 
+		<!-- This is needed for the sources required by the client-side compiler
 			to be included in the produced JARs -->
 		<resources>
 			<resource>

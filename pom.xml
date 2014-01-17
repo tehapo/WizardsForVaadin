@@ -5,14 +5,8 @@
 	<groupId>org.vaadin.addons</groupId>
 	<artifactId>wizards-for-vaadin-root</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<name>Wizards for Vaadin Parent</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.1.9</vaadin.version>
-		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
-	</properties>
 
 	<modules>
 		<module>wizards-for-vaadin</module>
