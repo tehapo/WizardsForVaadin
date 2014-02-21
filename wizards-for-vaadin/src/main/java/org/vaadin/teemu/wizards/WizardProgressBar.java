@@ -2,6 +2,8 @@ package org.vaadin.teemu.wizards;
 
 import java.util.List;
 
+import org.vaadin.teemu.wizards.Wizard;
+import org.vaadin.teemu.wizards.WizardStep;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
@@ -12,7 +14,7 @@ import com.vaadin.annotations.StyleSheet;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.ProgressIndicator;
+import com.vaadin.ui.ProgressBar;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -24,7 +26,7 @@ public class WizardProgressBar extends CustomComponent implements
         WizardProgressListener {
 
     private final Wizard wizard;
-    private final ProgressIndicator progressBar = new ProgressIndicator();
+    private final ProgressBar progressBar = new ProgressBar();
     private final HorizontalLayout stepCaptions = new HorizontalLayout();
     private int activeStepIndex;
 

@@ -1,9 +1,9 @@
-.wizard-progress-bar .v-progressindicator-wrapper {
+.wizard-progress-bar .v-progressbar-wrapper {
 	background: transparent;
 	border: none;
 	height: 10px;
 }
-.wizard-progress-bar .v-progressindicator-indicator {
+.wizard-progress-bar .v-progressbar-indicator {
 	height: 100%;
 	background-color: #00b3ef; 
 	background: -moz-linear-gradient(center top , #20D4FF, #009CD0) repeat-x scroll left top transparent;
