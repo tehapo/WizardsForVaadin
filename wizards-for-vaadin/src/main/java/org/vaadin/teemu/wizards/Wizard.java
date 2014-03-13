@@ -235,6 +235,45 @@ public class Wizard extends CustomComponent implements
         return header;
     }
 
+    
+    /*
+     * Inserts the WizardStep at the specified position in this list. 
+     * Shifts the step currently at that position (if any) and any subsequent steps
+     *  to the right (adds one to their indices).
+     */
+    public void addStep(WizardStep step, int index)
+    {
+    	String id = "wizard-step-" + step.hashCode();
+    	addStep(step, id, index);
+    }
+ 
+    /*
+     * Inserts the WizardStep at the specified position in this list. 
+     * Shifts the step currently at that position (if any) and any subsequent steps
+     *  to the right (adds one to their indices).
+     */
+    public void addStep(WizardStep step, String id, int index)
+    {
+        if (idMap.containsKey(id)) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "A step with given id %s already exists. You must use unique identifiers for the steps.",
+                            id));
+        }
+
+        steps.add(index, step);
+        idMap.put(id, step);
+        updateButtons();
+
+        // notify listeners
+        fireEvent(new WizardStepSetChangedEvent(this));
+
+        // activate the first step immediately
+        if (currentStep == null) {
+            activateStep(step);
+        }
+
+    }
     /**
      * Adds a step to this Wizard with the given identifier. The used {@code id}
      * must be unique or an {@link IllegalArgumentException} is thrown. If you
@@ -247,24 +286,7 @@ public class Wizard extends CustomComponent implements
      *             if the given {@code id} already exists.
      */
     public void addStep(WizardStep step, String id) {
-        if (idMap.containsKey(id)) {
-            throw new IllegalArgumentException(
-                    String.format(
-                            "A step with given id %s already exists. You must use unique identifiers for the steps.",
-                            id));
-        }
-
-        steps.add(step);
-        idMap.put(id, step);
-        updateButtons();
-
-        // notify listeners
-        fireEvent(new WizardStepSetChangedEvent(this));
-
-        // activate the first step immediately
-        if (currentStep == null) {
-            activateStep(step);
-        }
+    	addStep(step, id, steps.size());
     }
 
     /**
