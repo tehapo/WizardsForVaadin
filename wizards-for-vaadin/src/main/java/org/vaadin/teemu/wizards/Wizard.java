@@ -13,6 +13,7 @@ import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
 import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
+import com.google.gwt.thirdparty.guava.common.base.Preconditions;
 import com.vaadin.server.Page;
 import com.vaadin.server.Page.UriFragmentChangedEvent;
 import com.vaadin.server.Page.UriFragmentChangedListener;
@@ -254,15 +255,16 @@ public class Wizard extends CustomComponent implements
      */
     public void addStep(WizardStep step, String id, int index)
     {
-        if (idMap.containsKey(id)) {
+    	if (idMap.containsKey(id)) {
             throw new IllegalArgumentException(
                     String.format(
                             "A step with given id %s already exists. You must use unique identifiers for the steps.",
                             id));
         }
+		
+		steps.add(index, step);
+		idMap.put(id, step);
 
-        steps.add(index, step);
-        idMap.put(id, step);
         updateButtons();
 
         // notify listeners
@@ -272,8 +274,39 @@ public class Wizard extends CustomComponent implements
         if (currentStep == null) {
             activateStep(step);
         }
-
+        
     }
+    
+	/**
+	 * Adds a step after an existing step
+	 * 
+	 * @param newStep
+	 *            - new step to add
+	 * @param newId
+	 *            - id for the new step
+	 * @param existingStep
+	 *            - an existing step after which the step will be inserted
+	 */
+	public void addStepAfterStep(WizardStep newStep, String newId, WizardStep existingStep)
+	{
+		int idx = steps.indexOf(existingStep) + 1;
+		Preconditions.checkArgument(idx > -1, "Can not insert " + newStep + " after the step " + existingStep + " as "
+				+ existingStep + " is not currently a step in the wizard");
+		addStep(newStep, newId, idx);
+	}
+	
+	/**
+     * Adds a step after an existing step
+     * @param newStep - new step to add
+     * @param newId - id for the new step
+     * @param existingStep - an existing step after which the step will be inserted
+     */
+	public void addStepAfterStep(WizardStep newStep, WizardStep existingStep)
+	{
+		String id = "wizard-step-" + "-" + (stepIndex++);
+		addStepAfterStep(newStep, id,existingStep);
+	}
+
     /**
      * Adds a step to this Wizard with the given identifier. The used {@code id}
      * must be unique or an {@link IllegalArgumentException} is thrown. If you
