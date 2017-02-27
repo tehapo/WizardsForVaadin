@@ -57,7 +57,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-themes</artifactId>
+			<artifactId>vaadin-compatibility-themes</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
 		<dependency>
