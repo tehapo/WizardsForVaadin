@@ -2,7 +2,12 @@
 
 Notice that this page is written for the Wizards for Vaadin version 1.0.0. If you are using some other version, the API might differ and all features might not be available.
 
-Starting from version 1.0.0-beta1 Wizards for Vaadin supports only Vaadin 7. The [Vaadin 6 branch](https://github.com/tehapo/WizardsForVaadin/tree/vaadin6) is no longer maintained.
+Starting from version 2.0.0 Wizards for Vaadin supports only Vaadin 8.
+There are separate branches
+([vaadin7](https://github.com/tehapo/WizardsForVaadin/tree/vaadin7),
+[vaadin6](https://github.com/tehapo/WizardsForVaadin/tree/vaadin6))
+for older Vaadin versions.
+
 
 ## Installation
 
