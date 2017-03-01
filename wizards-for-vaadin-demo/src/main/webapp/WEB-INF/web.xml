@@ -20,6 +20,10 @@
 			<param-name>UI</param-name>
 			<param-value>org.vaadin.teemu.wizards.WizardsDemoApplication</param-value>
 		</init-param>
+        <init-param>
+            <param-name>widgetset</param-name>
+            <param-value>com.vaadin.v7.Vaadin7WidgetSet</param-value>
+        </init-param>
 	</servlet>
 
 	<servlet-mapping>
