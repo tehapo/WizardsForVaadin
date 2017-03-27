@@ -22,7 +22,7 @@
 		</init-param>
         <init-param>
             <param-name>widgetset</param-name>
-            <param-value>com.vaadin.v7.Vaadin7WidgetSet</param-value>
+            <param-value>com.vaadin.DefaultWidgetSet</param-value>
         </init-param>
 	</servlet>
 
