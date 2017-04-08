@@ -34,7 +34,7 @@ public class IntroStep implements WizardStep {
                         + "user interfaces. Please use the controls below this content area to navigate "
                         + "through this wizard that demonstrates the features and usage of this add-on.</p><h3>Additional information</h3>"
                         + "<ul><li><a href=\"https://vaadin.com/addon/wizards-for-vaadin\">Wizards for Vaadin </a> at Vaadin Directory</li>"
-                        + "<li><a href=\"http://code.google.com/p/wizards-for-vaadin/\">Project page</a> at Google Project Hosting (including source code of this demo)</li>"
+                        + "<li><a href=\"https://github.com/tehapo/WizardsForVaadin/\">Project page</a> on GitHub (including source code of this demo)</li>"
                         + "<li><a href=\"https://vaadin.com/teemu/\">Author homepage</a> at Vaadin</li></ul>",
                 ContentMode.HTML);
     }
