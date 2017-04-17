@@ -37,6 +37,8 @@ public class WizardProgressBar extends CustomComponent implements
         progressBar.setHeight("13px");
 
         VerticalLayout layout = new VerticalLayout();
+        layout.setSpacing(false);
+        layout.setMargin(false);
         layout.setWidth("100%");
         layout.addComponent(stepCaptions);
         layout.addComponent(progressBar);
@@ -64,6 +66,7 @@ public class WizardProgressBar extends CustomComponent implements
     private Label createCaptionLabel(int index, WizardStep step) {
         Label label = new Label(index + ". " + step.getCaption());
         label.addStyleName("step-caption");
+        label.setWidth("100%");
 
         // Add styles for themeing.
         if (wizard.isCompleted(step)) {

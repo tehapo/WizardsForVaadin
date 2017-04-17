@@ -1,0 +1,46 @@
+@import "../valo/valo.scss";
+
+@mixin demo {
+	@include valo;
+
+	.wizard .v-panel-content pre,
+	.wizard .v-panel-content code {
+		font-family: Monaco, Courier, sans-serif;
+	}
+
+	.wizard .v-panel-content pre {
+		padding-left: 10px;
+	}
+
+	.wizard .v-panel-content p.narrow {
+		width: 400px;
+	}
+
+	.intro-arrow {
+		position: absolute;
+		bottom: 5px;
+		right: 70px;
+		-webkit-animation: hovering 2s infinite;
+		-moz-animation: hovering 2s infinite;
+	}
+
+	.listen-arrow {
+		position: absolute;
+		top: 5px;
+		right: 280px;
+		-webkit-animation: hovering-top 2s infinite;
+		-moz-animation: hovering-top 2s infinite;
+	}
+}
+
+@keyframes hovering {
+	0%  { bottom: 5px; }
+	50% { bottom: 10px; }
+	100% { bottom: 5px; }
+}
+
+@keyframes hovering-top {
+	0%  { top: 5px; }
+	50% { top: 10px; }
+	100% { top: 5px; }
+}

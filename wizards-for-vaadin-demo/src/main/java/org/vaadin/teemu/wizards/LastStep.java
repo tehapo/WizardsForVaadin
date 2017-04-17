@@ -31,9 +31,8 @@ public class LastStep implements WizardStep {
 
             layout = new VerticalLayout();
             layout.setMargin(true);
-            layout.addComponent(new Label(
-                    "<h2>Need more steps?</h2><p>You can also dynamically add new steps. Try it out with the button below.</p>",
-                    ContentMode.HTML));
+            layout.addComponent(new DemoLabel(
+                    "<h2>Need more steps?</h2><p>You can also dynamically add new steps. Try it out with the button below.</p>"));
             layout.addComponent(new Button("Add new steps",
                     new Button.ClickListener() {
 
@@ -68,10 +67,9 @@ public class LastStep implements WizardStep {
                         }
                     }));
 
-            layout.addComponent(new Label(
+            layout.addComponent(new DemoLabel(
                     "<h2>Want to go back?</h2><p>This step is also an example of conditionally allowing you to go back.<br />"
-                            + "Try to click the back button and then again after checking the checkbox below.</p>",
-                    ContentMode.HTML));
+                            + "Try to click the back button and then again after checking the checkbox below.</p>"));
             layout.addComponent(allowBack);
         }
         return layout;
