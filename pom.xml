@@ -14,7 +14,7 @@
     </modules>
         
     <properties>
-        <vaadin.version>7.7.8</vaadin.version>
+        <vaadin.version>7.7.9</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
     </properties>
 </project>
