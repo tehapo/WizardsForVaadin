@@ -367,6 +367,8 @@ public class Wizard extends CustomComponent implements
 
         if (currentStep != null) {
             if (currentStep.equals(step)) {
+                //Update the content anyway.
+                contentPanel.setContent(step.getContent());
                 // already active
                 return;
             }
@@ -607,5 +609,14 @@ public class Wizard extends CustomComponent implements
      */
     public void setDisplayedMaxTitles(int displayedMaxTitles) {
         progressBar.setMaxStepsDisplayed(displayedMaxTitles);
+    }
+
+    /**
+     * Update de displayed step.
+     */
+    public void updateCurrentStep() {
+        if (currentStep != null) {
+            activateStep(currentStep);
+        }
     }
 }
