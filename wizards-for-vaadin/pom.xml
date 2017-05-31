@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.vaadin.addons</groupId>
         <artifactId>wizards-for-vaadin-root</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.2</version>
     </parent>
 
     <properties>
