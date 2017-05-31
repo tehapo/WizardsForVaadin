@@ -1,18 +1,5 @@
 package org.vaadin.teemu.wizards;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
-import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
-import org.vaadin.teemu.wizards.event.WizardProgressListener;
-import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
-import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
-
 import com.vaadin.server.Page;
 import com.vaadin.server.Page.UriFragmentChangedEvent;
 import com.vaadin.server.Page.UriFragmentChangedListener;
@@ -24,16 +11,27 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
+import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
+import org.vaadin.teemu.wizards.event.WizardProgressListener;
+import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
+import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
 
 /**
  * Component for displaying multi-step wizard style user interface.
- * 
+ *
  * <p>
  * The steps of the wizard must be implementations of the {@link WizardStep}
  * interface. Use the {@link #addStep(WizardStep)} method to add these steps in
  * the same order they are supposed to be displayed.
  * </p>
- * 
+ *
  * <p>
  * The wizard also supports navigation through URI fragments. This feature is
  * disabled by default, but you can enable it using
@@ -42,7 +40,7 @@ import com.vaadin.ui.VerticalLayout;
  * override these with your own identifiers, you can add the steps using the
  * overloaded {@link #addStep(WizardStep, String)} method.
  * </p>
- * 
+ *
  * <p>
  * To react on the progress, cancellation or completion of this {@code Wizard}
  * you should add one or more listeners that implement the
@@ -50,7 +48,7 @@ import com.vaadin.ui.VerticalLayout;
  * {@link #addListener(WizardProgressListener)} method and removed with the
  * {@link #removeListener(WizardProgressListener)}.
  * </p>
- * 
+ *
  * @author Teemu Pöntelin / Vaadin Ltd
  */
 @SuppressWarnings("serial")
@@ -58,8 +56,10 @@ public class Wizard extends CustomComponent implements
         UriFragmentChangedListener {
 
     protected final List<WizardStep> steps = new ArrayList<WizardStep>();
-    protected final Map<String, WizardStep> idMap = new HashMap<String, WizardStep>();
-    private final Map<WizardStep, ScrollPosition> scrollPositions = new HashMap<WizardStep, ScrollPosition>();
+    protected final Map<String, WizardStep> idMap
+            = new HashMap<String, WizardStep>();
+    private final Map<WizardStep, ScrollPosition> scrollPositions
+            = new HashMap<WizardStep, ScrollPosition>();
 
     protected WizardStep currentStep;
     protected WizardStep lastCompletedStep;
@@ -77,6 +77,7 @@ public class Wizard extends CustomComponent implements
 
     private Component header;
     private boolean uriFragmentEnabled;
+    private WizardProgressBar progressBar;
 
     private static final Method WIZARD_ACTIVE_STEP_CHANGED_METHOD;
     private static final Method WIZARD_STEP_SET_CHANGED_METHOD;
@@ -87,16 +88,16 @@ public class Wizard extends CustomComponent implements
         try {
             WIZARD_COMPLETED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("wizardCompleted",
-                            new Class[] { WizardCompletedEvent.class });
+                            new Class[]{WizardCompletedEvent.class});
             WIZARD_STEP_SET_CHANGED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("stepSetChanged",
-                            new Class[] { WizardStepSetChangedEvent.class });
+                            new Class[]{WizardStepSetChangedEvent.class});
             WIZARD_ACTIVE_STEP_CHANGED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("activeStepChanged",
-                            new Class[] { WizardStepActivationEvent.class });
+                            new Class[]{WizardStepActivationEvent.class});
             WIZARD_CANCELLED_METHOD = WizardProgressListener.class
                     .getDeclaredMethod("wizardCancelled",
-                            new Class[] { WizardCancelledEvent.class });
+                            new Class[]{WizardCancelledEvent.class});
         } catch (final java.lang.NoSuchMethodException e) {
             // This should never happen
             throw new java.lang.RuntimeException(
@@ -105,6 +106,7 @@ public class Wizard extends CustomComponent implements
     }
 
     private static final class ScrollPosition {
+
         int scrollTop;
         int scrollLeft;
 
@@ -114,6 +116,9 @@ public class Wizard extends CustomComponent implements
         }
     }
 
+    /**
+     * Default constructor.
+     */
     public Wizard() {
         setStyleName("wizard");
         init();
@@ -149,6 +154,7 @@ public class Wizard extends CustomComponent implements
     private void initControlButtons() {
         nextButton = new Button("Next");
         nextButton.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(ClickEvent event) {
                 next();
             }
@@ -156,6 +162,7 @@ public class Wizard extends CustomComponent implements
 
         backButton = new Button("Back");
         backButton.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(ClickEvent event) {
                 back();
             }
@@ -163,6 +170,7 @@ public class Wizard extends CustomComponent implements
 
         finishButton = new Button("Finish");
         finishButton.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(ClickEvent event) {
                 finish();
             }
@@ -171,6 +179,7 @@ public class Wizard extends CustomComponent implements
 
         cancelButton = new Button("Cancel");
         cancelButton.addClickListener(new Button.ClickListener() {
+            @Override
             public void buttonClick(ClickEvent event) {
                 cancel();
             }
@@ -178,7 +187,8 @@ public class Wizard extends CustomComponent implements
     }
 
     private void initDefaultHeader() {
-        WizardProgressBar progressBar = new WizardProgressBar(this);
+        progressBar = new WizardProgressBar(this);
+        progressBar.setMaxStepsDisplayed(getDisplayedMaxTitles());
         addListener(progressBar);
         setHeader(progressBar);
     }
@@ -199,10 +209,9 @@ public class Wizard extends CustomComponent implements
     /**
      * Sets a {@link Component} that is displayed on top of the actual content.
      * Set to {@code null} to remove the header altogether.
-     * 
-     * @param newHeader
-     *            {@link Component} to be displayed on top of the actual content
-     *            or {@code null} to remove the header.
+     *
+     * @param newHeader {@link Component} to be displayed on top of the actual
+     * content or {@code null} to remove the header.
      */
     public void setHeader(Component newHeader) {
         if (header != null) {
@@ -222,14 +231,14 @@ public class Wizard extends CustomComponent implements
     /**
      * Returns a {@link Component} that is displayed on top of the actual
      * content or {@code null} if no header is specified.
-     * 
+     *
      * <p>
      * By default the header is a {@link WizardProgressBar} component that is
      * also registered as a {@link WizardProgressListener} to this Wizard.
      * </p>
-     * 
+     *
      * @return {@link Component} that is displayed on top of the actual content
-     *         or {@code null}.
+     * or {@code null}.
      */
     public Component getHeader() {
         return header;
@@ -240,11 +249,10 @@ public class Wizard extends CustomComponent implements
      * must be unique or an {@link IllegalArgumentException} is thrown. If you
      * don't wish to explicitly provide an identifier, you can use the
      * {@link #addStep(WizardStep)} method.
-     * 
+     *
      * @param step
      * @param id
-     * @throws IllegalStateException
-     *             if the given {@code id} already exists.
+     * @throws IllegalStateException if the given {@code id} already exists.
      */
     public void addStep(WizardStep step, String id) {
         if (idMap.containsKey(id)) {
@@ -272,7 +280,7 @@ public class Wizard extends CustomComponent implements
      * automatically. If you wish to provide an explicit identifier for your
      * WizardStep, you can use the {@link #addStep(WizardStep, String)} method
      * instead.
-     * 
+     *
      * @param step
      */
     public void addStep(WizardStep step) {
@@ -307,9 +315,8 @@ public class Wizard extends CustomComponent implements
 
     /**
      * Returns {@code true} if the given step is already completed by the user.
-     * 
-     * @param step
-     *            step to check for completion.
+     *
+     * @param step step to check for completion.
      * @return {@code true} if the given step is already completed.
      */
     public boolean isCompleted(WizardStep step) {
@@ -318,9 +325,8 @@ public class Wizard extends CustomComponent implements
 
     /**
      * Returns {@code true} if the given step is the currently active step.
-     * 
-     * @param step
-     *            step to check for.
+     *
+     * @param step step to check for.
      * @return {@code true} if the given step is the currently active step.
      */
     public boolean isActive(WizardStep step) {
@@ -361,6 +367,8 @@ public class Wizard extends CustomComponent implements
 
         if (currentStep != null) {
             if (currentStep.equals(step)) {
+                //Update the content anyway.
+                contentPanel.setContent(step.getContent());
                 // already active
                 return;
             }
@@ -429,9 +437,9 @@ public class Wizard extends CustomComponent implements
             // check that we don't go past the lastCompletedStep by using the id
             int lastCompletedIndex = lastCompletedStep == null ? -1 : steps
                     .indexOf(lastCompletedStep);
-            int stepIndex = steps.indexOf(step);
+            int index = steps.indexOf(step);
 
-            if (lastCompletedIndex < stepIndex) {
+            if (lastCompletedIndex < index) {
                 activateStep(lastCompletedStep);
             } else {
                 activateStep(step);
@@ -537,9 +545,8 @@ public class Wizard extends CustomComponent implements
      * Removes the given step from this Wizard. An {@link IllegalStateException}
      * is thrown if the given step is already completed or is the currently
      * active step.
-     * 
-     * @param stepToRemove
-     *            the step to remove.
+     *
+     * @param stepToRemove the step to remove.
      * @see #isCompleted(WizardStep)
      * @see #isActive(WizardStep)
      */
@@ -559,9 +566,8 @@ public class Wizard extends CustomComponent implements
      * Removes the step with given id from this Wizard. An
      * {@link IllegalStateException} is thrown if the given step is already
      * completed or is the currently active step.
-     * 
-     * @param id
-     *            identifier of the step to remove.
+     *
+     * @param id identifier of the step to remove.
      * @see #isCompleted(WizardStep)
      * @see #isActive(WizardStep)
      */
@@ -585,4 +591,32 @@ public class Wizard extends CustomComponent implements
         }
     }
 
+    /**
+     * Get amount of steps to display on the header at a time. A value of -1
+     * means all will be displayed.
+     *
+     * @return the displayedMaxTitles
+     */
+    public int getDisplayedMaxTitles() {
+        return progressBar.getMaxStepsDisplayed();
+    }
+
+    /**
+     * Set amount of steps to display on the header at a time. A value of -1
+     * means all will be displayed.
+     *
+     * @param displayedMaxTitles the displayedMaxTitles to set
+     */
+    public void setDisplayedMaxTitles(int displayedMaxTitles) {
+        progressBar.setMaxStepsDisplayed(displayedMaxTitles);
+    }
+
+    /**
+     * Update de displayed step.
+     */
+    public void updateCurrentStep() {
+        if (currentStep != null) {
+            activateStep(currentStep);
+        }
+    }
 }
