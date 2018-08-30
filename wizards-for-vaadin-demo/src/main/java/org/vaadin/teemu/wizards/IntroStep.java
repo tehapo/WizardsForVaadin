@@ -1,7 +1,6 @@
 package org.vaadin.teemu.wizards;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
@@ -9,17 +8,19 @@ import com.vaadin.ui.VerticalLayout;
 
 public class IntroStep implements WizardStep {
 
+    @Override
     public String getCaption() {
         return "Intro";
     }
 
+    @Override
     public Component getContent() {
         VerticalLayout content = new VerticalLayout(getText(), getArrow());
         content.setMargin(true);
         return content;
     }
 
-    private Label getText() {
+    public Label getText() {
         return new DemoLabel(
                 "<h2>Wizards for Vaadin add-on</h2><p>This is a demo application of the "
                         + "Wizards for Vaadin add-on.</p><p>The goal of this add-on is to provide a simple framework for easily creating wizard style "
@@ -37,10 +38,12 @@ public class IntroStep implements WizardStep {
         return arrow;
     }
 
+    @Override
     public boolean onAdvance() {
         return true;
     }
 
+    @Override
     public boolean onBack() {
         return true;
     }
