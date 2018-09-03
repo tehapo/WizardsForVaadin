@@ -3,7 +3,7 @@
 //    // -----------------------------------------------
 //    new WizardDialog()
 //    {
-//        public void Start(WizardProgressListener d)
+//        public void Start()
 //        {
 //            addStep(new IntroStep(), "intro");
 //            addStep(new SetupStep(), "setup");
