@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/wizards-for-vaadin)
+[![Stars on Vaadin Directory](https://img.shields.io/vaadin-directory/star/wizards-for-vaadin.svg)](https://vaadin.com/directory/component/wizards-for-vaadin)
+
 ## Getting Started
 
 Notice that this page is written for the Wizards for Vaadin version 1.0.0. If you are using some other version, the API might differ and all features might not be available.
