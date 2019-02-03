@@ -4,13 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.vaadin.addons</groupId>
 	<artifactId>wizards-for-vaadin</artifactId>
-	<version>2.0.1</version>
-	<packaging>jar</packaging>
+	<version>2.0.2</version>
+	<packaging>bundle</packaging>
 	<name>Wizards for Vaadin</name>
-
+	
+	<organization>
+		<name>Vaadin Community</name>
+	</organization>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>8.0.5</vaadin.version>
+		<vaadin.version>8.5.2</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 
 		<!-- ZIP Manifest fields -->
@@ -168,6 +172,22 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+        			<groupId>org.apache.felix</groupId>
+        			<artifactId>maven-bundle-plugin</artifactId>
+        			<version>3.5.1</version>
+        			<extensions>true</extensions>
+        			<executions>
+          				<execution>
+           					<id>manifest</id>
+            					<phase>process-classes</phase>
+            					<goals>
+              						<goal>manifest</goal>
+            					</goals>
+          				</execution>
+        			</executions>
+      			</plugin>
 
 			<!-- Testing -->
 			<plugin>
